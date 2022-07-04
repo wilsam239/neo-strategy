@@ -7,10 +7,10 @@
         </button></li>
       </ng-container>
     </ul>
-    <button mat-raised-button (click)="addListItem()">New Item</button>
+    <button mat-raised-button (click)="addListItem(); konvaTest()">New Item</button>
   </div>
 
   <mat-card id="canvas-container">
-    <canvas #matrix></canvas>
+    <div id="matrix"></div>
     </mat-card>
 </div>

@@ -1,16 +1,19 @@
 <div fxFlex fxLayout>
   <div id="priority-list">
-    <ul>
+    <mat-form-field appearance="standard">
+        <input matInput [(ngModel)]="newPriority" placeholder="New priority...">
+    </mat-form-field>
+    <ol>
       <ng-container *ngFor="let item of priorities; let i = index;">
         <li>{{ item.title }} <button mat-icon-button (click)="removeListItem(i)">
             <mat-icon aria-label="label">delete</mat-icon>
         </button></li>
       </ng-container>
-    </ul>
-    <button mat-raised-button (click)="addListItem(); konvaTest()">New Item</button>
+    </ol>
+    <button mat-raised-button (click)="addListItem()">New Item</button>
   </div>
 
   <mat-card id="canvas-container">
     <div id="matrix"></div>
-    </mat-card>
+  </mat-card>
 </div>

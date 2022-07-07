@@ -1,6 +1,6 @@
 <div fxFlexFill>
   <mat-sidenav-container>
-    <mat-sidenav #sidenav mode="side" opened class="sidenav" position="start">
+    <mat-sidenav #sidenav mode="over" opened class="sidenav" position="start">
       <div id="priority-list">
         <mat-form-field appearance="outline" fxFill>
           <input
@@ -37,23 +37,22 @@
       </div>
     </mat-sidenav>
 
-    <mat-sidenav-content fxLayout>
+    <mat-sidenav-content>
+      <button mat-icon-button (click)="sidenav.toggle()" id="priority-toggle">
+        <mat-icon aria-label="label">menu</mat-icon>
+      </button>
       <mat-card id="canvas-container" fxFlexFill fxLayout>
-        <button mat-icon-button (click)="sidenav.toggle()">
-          <mat-icon aria-label="label">menu</mat-icon>
-        </button>
         <div id="matrix"></div>
-        <div fxFlex></div>
-        <button mat-icon-button (click)="settings.toggle()">
-          <mat-icon aria-label="label">settings</mat-icon>
-        </button>
       </mat-card>
+      <button mat-icon-button (click)="settings.toggle()" id="settings-toggle">
+        <mat-icon aria-label="label">settings</mat-icon>
+      </button>
     </mat-sidenav-content>
 
     <mat-sidenav
       id="settings-sidenav"
       #settings
-      mode="side"
+      mode="over"
       [opened]="false"
       class="sidenav"
       position="end"

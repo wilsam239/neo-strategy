@@ -1,5 +1,7 @@
 import { Group } from "konva/lib/Group";
 import { Shape } from "konva/lib/Shape";
+import { Label, Tag } from "konva/lib/shapes/Label";
+import { Text } from "konva/lib/shapes/Text";
 import { Stage } from "konva/lib/Stage";
 
 export class KonvaHelper {
@@ -11,7 +13,6 @@ export class KonvaHelper {
   }
 
   addTo(parent: any, ...children: any[]) {
-    console.log(children);
     children.forEach((child) => {
       parent.add(child);
     });
@@ -48,7 +49,7 @@ export class KonvaHelper {
     return this.drawnItems[id];
   }
 
-  getChildrenOfType(item: Group, className: string) {
+  fetchChildrenOfType(item: Group, className: string) {
     return item.getChildren((child) => child.className === className);
   }
 
@@ -68,6 +69,39 @@ export class KonvaHelper {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
+  }
+
+  createTooltip(textString: string) {
+    const tooltip = new Label({});
+    tooltip.hide();
+
+    const tooltipTag = new Tag({
+      fill: "black",
+      pointerDirection: "down",
+      pointerWidth: 10,
+      pointerHeight: 10,
+      lineJoin: "round",
+      shadowColor: "black",
+      shadowBlur: 10,
+      shadowOffsetX: 10,
+      shadowOffsetY: 10,
+      shadowOpacity: 0.5,
+    });
+
+    const tooltipText = new Text({
+      text: textString,
+      fontFamily: "Calibri",
+      fontSize: 18,
+      padding: 5,
+      fill: "white",
+    });
+
+    this.addTo(tooltip, tooltipTag, tooltipText);
+    return tooltip;
+  }
+
+  createPriority() {
+    
   }
 
   public get priorityChildren() {

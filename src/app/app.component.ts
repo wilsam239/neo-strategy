@@ -4,12 +4,16 @@ import { Group } from "konva/lib/Group";
 import { Layer } from "konva/lib/Layer";
 import { KonvaEventObject } from "konva/lib/Node";
 import { Circle } from "konva/lib/shapes/Circle";
-import { Label, Tag } from "konva/lib/shapes/Label";
 import { Line } from "konva/lib/shapes/Line";
 import { Text } from "konva/lib/shapes/Text";
 import { Stage } from "konva/lib/Stage";
 import { debounceTime, fromEvent, Subscription, tap } from "rxjs";
 import { KonvaHelper } from "./konva-helper";
+
+interface Position {
+  x: number;
+  y: number;
+}
 
 interface PriorityItem {
   id: string;
@@ -132,32 +136,14 @@ export class AppComponent implements OnInit, OnDestroy {
 
     this.helper.addToStage(axisLayer);
   }
-  addListItem(pos?: { x: number; y: number }) {
+
+  addListItem(pos?: Position) {
     if (!this.newPriorityItem) {
       console.error("No priority entered");
       return;
     }
 
-    if (!pos) {
-      pos = {
-        x: this.helper.stage.width() / 2,
-        y: this.helper.stage.height() / 2,
-      };
-    }
-
-    if (this.newPriority) {
-      this.newPriority = this.newPriority > 10 ? 10 : this.newPriority;
-      pos.x = AXES_START + (this.xAxisLength / 10) * this.newPriority;
-    }
-
-    if (this.newResource) {
-      // resources are on y axis (for now), so we need to flip the value (if 2, it becomes 8 etc)
-      // Done by doing 10 - value, then taking the absolute value
-      // So if val is 8, 10 - 2 == 8
-      this.newResource = this.newResource > 10 ? 10 : this.newResource;
-      const flippedResource = 10 - this.newResource;
-      pos.y = AXES_START + (this.yAxisHeight / 10) * flippedResource;
-    }
+    pos = this.getPosOfNewItem(pos);
 
     const newId = this.helper.generateId();
 
@@ -187,31 +173,7 @@ export class AppComponent implements OnInit, OnDestroy {
       fill: "green",
     });
 
-    const tooltip = new Label({});
-    tooltip.hide();
-
-    const tooltipTag = new Tag({
-      fill: "black",
-      pointerDirection: "down",
-      pointerWidth: 10,
-      pointerHeight: 10,
-      lineJoin: "round",
-      shadowColor: "black",
-      shadowBlur: 10,
-      shadowOffsetX: 10,
-      shadowOffsetY: 10,
-      shadowOpacity: 0.5,
-    });
-
-    const tooltipText = new Text({
-      text: this.newPriorityItem,
-      fontFamily: "Calibri",
-      fontSize: 18,
-      padding: 5,
-      fill: "white",
-    });
-
-    this.helper.addTo(tooltip, tooltipTag, tooltipText);
+    const tooltip = this.helper.createTooltip(this.newPriorityItem);
 
     priorityGroup.on("mouseover", function () {
       document.body.style.cursor = "pointer";
@@ -239,6 +201,31 @@ export class AppComponent implements OnInit, OnDestroy {
     this.newPriority = undefined;
     this.newPriorityItem = undefined;
     this.newResource = undefined;
+  }
+
+  private getPosOfNewItem(pos?: Position) {
+    if (!pos) {
+      pos = {
+        x: this.helper.stage.width() / 2,
+        y: this.helper.stage.height() / 2,
+      };
+    }
+
+    if (this.newPriority) {
+      this.newPriority = this.newPriority > 10 ? 10 : this.newPriority;
+      pos.x = AXES_START + (this.xAxisLength / 10) * this.newPriority;
+    }
+
+    if (this.newResource) {
+      // resources are on y axis (for now), so we need to flip the value (if 2, it becomes 8 etc)
+      // Done by doing 10 - value, then taking the absolute value
+      // So if val is 8, 10 - 2 == 8
+      this.newResource = this.newResource > 10 ? 10 : this.newResource;
+      const flippedResource = 10 - this.newResource;
+      pos.y = AXES_START + (this.yAxisHeight / 10) * flippedResource;
+    }
+
+    return pos;
   }
 
   removeListItem(i: number) {
@@ -272,11 +259,11 @@ export class AppComponent implements OnInit, OnDestroy {
     console.log(event);
   }
 
-  hoverHandle(id: string, over: boolean) {
+  handleHover(id: string, over: boolean) {
     const group = this.helper.fetchDrawnItem(id);
 
     if (group && group instanceof Group) {
-      const circles = this.helper.getChildrenOfType(
+      const circles = this.helper.fetchChildrenOfType(
         group,
         "Circle"
       ) as Circle[];
@@ -289,8 +276,6 @@ export class AppComponent implements OnInit, OnDestroy {
             circle.fill("white");
           }
         });
-
-        // this.helper.refreshStage();
       }
     }
   }
@@ -298,7 +283,7 @@ export class AppComponent implements OnInit, OnDestroy {
   updateRadius() {
     const groups = this.helper.fetchItemsOfType("Group") as Group[];
     groups.forEach((group) => {
-      const circles = this.helper.getChildrenOfType(
+      const circles = this.helper.fetchChildrenOfType(
         group,
         "Circle"
       ) as Circle[];

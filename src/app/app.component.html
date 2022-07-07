@@ -1,6 +1,14 @@
 <div fxFlexFill>
   <mat-sidenav-container>
     <mat-sidenav #sidenav mode="over" opened class="sidenav" position="start">
+      <div fxLayout fxLayoutAlign="center center">
+        <h1>Priorities</h1>
+        <div fxFlex></div>
+        <button mat-icon-button (click)="sidenav.toggle()">
+          <mat-icon aria-label="label">close</mat-icon>
+        </button>
+      </div>
+      <mat-divider></mat-divider>
       <div id="priority-list">
         <mat-form-field appearance="outline" fxFill>
           <mat-label>New Priority</mat-label>

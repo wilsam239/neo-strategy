@@ -23,16 +23,30 @@ export class KonvaHelper {
   }
 
   removeDrawnItem(id: string) {
-    if(this.drawnItems[id]) {
-        this.drawnItems[id].remove();
-        delete this.drawnItems[id];
+    if (this.drawnItems[id]) {
+      this.drawnItems[id].remove();
+      delete this.drawnItems[id];
     } else {
-        throw new Error('No Drawn Item with id' + id);
+      throw new Error("No Drawn Item with id" + id);
     }
   }
 
   refreshStage() {
     this.stage.draw();
+  }
+
+  fetchItemsOfType(className: string) {
+    return Object.values(this.drawnItems).filter(
+      (i) => i.className === className || i.getType() === className
+    );
+  }
+
+  fetchDrawnItem(id: string) {
+    return this.drawnItems[id];
+  }
+
+  getChildrenOfType(item: Group, className: string) {
+    return item.getChildren((child) => child.className === className);
   }
 
   generateId(length = 10) {
@@ -47,7 +61,9 @@ export class KonvaHelper {
   }
 
   public get priorityChildren() {
-    return Object.values(this.drawnItems).filter(item => !item.getAttr('exclude'))
+    return Object.values(this.drawnItems).filter(
+      (item) => !item.getAttr("exclude")
+    );
   }
   public get stage() {
     return this._stage;

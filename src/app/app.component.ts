@@ -1,23 +1,11 @@
 import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
-import {
-  Observable,
-  of,
-  BehaviorSubject,
-  fromEvent,
-  map,
-  scan,
-  pairwise,
-  combineLatest,
-  startWith,
-} from "rxjs";
-import { Stage } from "konva/lib/Stage";
-import { Layer } from "konva/lib/Layer";
-import { Circle } from "konva/lib/shapes/Circle";
-import { Text } from "konva/lib/shapes/Text";
-import { Shape, ShapeConfig } from "konva/lib/Shape";
-import { KonvaEventObject } from "konva/lib/Node";
-import { Line } from "konva/lib/shapes/Line";
 import { Group } from "konva/lib/Group";
+import { Layer } from "konva/lib/Layer";
+import { KonvaEventObject } from "konva/lib/Node";
+import { Circle } from "konva/lib/shapes/Circle";
+import { Line } from "konva/lib/shapes/Line";
+import { Text } from "konva/lib/shapes/Text";
+import { Stage } from "konva/lib/Stage";
 import { KonvaHelper } from "./konva-helper";
 
 interface PriorityItem {
@@ -45,6 +33,12 @@ export class AppComponent implements OnInit {
   newPriority?: string;
   helper!: KonvaHelper;
 
+  options: {
+    circleRadius: number;
+  } = {
+    circleRadius: 25,
+  };
+
   ngOnInit() {
     this.initStage();
   }
@@ -64,8 +58,15 @@ export class AppComponent implements OnInit {
 
     this.helper.addToStage(this.priorityLayer);
     this.helper.refreshStage();
+    this.makeFakeList();
   }
 
+  private makeFakeList(length = 5) {
+    for (let i = 0; i < length; i++) {
+      this.newPriority = this.helper.generateId(15);
+      this.addListItem({ x: i * 50 + 100, y: i * 50 + 100 });
+    }
+  }
   private initAxes() {
     const axisLayer = new Layer();
 
@@ -97,7 +98,7 @@ export class AppComponent implements OnInit {
 
     this.helper.addToStage(axisLayer);
   }
-  addListItem() {
+  addListItem(pos?: { x: number; y: number }) {
     if (!this.newPriority) {
       console.error("No priority entered");
       return;
@@ -111,14 +112,14 @@ export class AppComponent implements OnInit {
     });
 
     const priorityGroup = new Group({
-      x: this.helper.stage.width() / 2,
-      y: this.helper.stage.height() / 2,
+      x: pos?.x ?? this.helper.stage.width() / 2,
+      y: pos?.y ?? this.helper.stage.height() / 2,
       id: newId,
       draggable: true,
     });
 
     const newCircle = new Circle({
-      radius: 25,
+      radius: this.options.circleRadius,
       fill: "white",
       stroke: "black",
       strokeWidth: 4,
@@ -133,9 +134,11 @@ export class AppComponent implements OnInit {
 
     priorityGroup.on("mouseover", function () {
       document.body.style.cursor = "pointer";
+      newCircle.fill("green");
     });
     priorityGroup.on("mouseout", function () {
       document.body.style.cursor = "default";
+      newCircle.fill("white");
     });
 
     this.helper.addTo(priorityGroup, newCircle);
@@ -177,5 +180,43 @@ export class AppComponent implements OnInit {
 
   recalculatePriorities(e: KonvaEventObject<DragEvent>) {
     console.log("Recalc priorities here");
+  }
+
+  handleKey(event: any) {
+    console.log(event);
+  }
+
+  hoverHandle(id: string, over: boolean) {
+    const group = this.helper.fetchDrawnItem(id);
+
+    if (group && group instanceof Group) {
+      const circles = this.helper.getChildrenOfType(
+        group,
+        "Circle"
+      ) as Circle[];
+
+      if (circles.length > 0) {
+        circles.forEach((circle) => {
+          if (over) {
+            circle.fill("green");
+          } else {
+            circle.fill("white");
+          }
+        });
+
+        // this.helper.refreshStage();
+      }
+    }
+  }
+
+  updateRadius() {
+    const groups = this.helper.fetchItemsOfType("Group") as Group[];
+    groups.forEach((group) => {
+      const circles = this.helper.getChildrenOfType(
+        group,
+        "Circle"
+      ) as Circle[];
+      circles.forEach((circle) => circle.radius(this.options.circleRadius));
+    });
   }
 }

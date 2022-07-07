@@ -10,8 +10,11 @@ export class KonvaHelper {
     this.stage.add(child);
   }
 
-  addTo(parent: any, child: any) {
-    parent.add(child);
+  addTo(parent: any, ...children: any[]) {
+    console.log(children);
+    children.forEach((child) => {
+      parent.add(child);
+    });
   }
 
   addDrawnItem(...items: any[]) {

@@ -4,6 +4,7 @@ import { Group } from "konva/lib/Group";
 import { Layer } from "konva/lib/Layer";
 import { KonvaEventObject } from "konva/lib/Node";
 import { Circle } from "konva/lib/shapes/Circle";
+import { Label, Tag } from "konva/lib/shapes/Label";
 import { Line } from "konva/lib/shapes/Line";
 import { Text } from "konva/lib/shapes/Text";
 import { Stage } from "konva/lib/Stage";
@@ -86,7 +87,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
     this.helper.addToStage(this.priorityLayer);
     this.helper.refreshStage();
-    this.makeFakeList();
+    this.makeFakeList(15);
   }
 
   private makeFakeList(length = 5) {
@@ -186,17 +187,46 @@ export class AppComponent implements OnInit, OnDestroy {
       fill: "green",
     });
 
+    const tooltip = new Label({});
+    tooltip.hide();
+
+    const tooltipTag = new Tag({
+      fill: "black",
+      pointerDirection: "down",
+      pointerWidth: 10,
+      pointerHeight: 10,
+      lineJoin: "round",
+      shadowColor: "black",
+      shadowBlur: 10,
+      shadowOffsetX: 10,
+      shadowOffsetY: 10,
+      shadowOpacity: 0.5,
+    });
+
+    const tooltipText = new Text({
+      text: this.newPriorityItem,
+      fontFamily: "Calibri",
+      fontSize: 18,
+      padding: 5,
+      fill: "white",
+    });
+
+    this.helper.addTo(tooltip, tooltipTag, tooltipText);
+
     priorityGroup.on("mouseover", function () {
       document.body.style.cursor = "pointer";
+      tooltip.show();
       newCircle.fill("green");
     });
     priorityGroup.on("mouseout", function () {
       document.body.style.cursor = "default";
+      tooltip.hide();
       newCircle.fill("white");
     });
 
     this.helper.addTo(priorityGroup, newCircle);
     this.helper.addTo(priorityGroup, priorityLabel);
+    this.helper.addTo(priorityGroup, tooltip);
 
     priorityGroup.on("dragend", (e) => {
       this.recalculatePriorities(e);

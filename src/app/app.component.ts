@@ -1,10 +1,5 @@
-import {
-  Component,
-  ElementRef,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from "@angular/core";
+import { Component, OnDestroy, OnInit, ViewChild } from "@angular/core";
+import { MatSelectionList } from "@angular/material/list";
 import { Group } from "konva/lib/Group";
 import { Layer } from "konva/lib/Layer";
 import { KonvaEventObject } from "konva/lib/Node";
@@ -37,10 +32,8 @@ export class AppComponent implements OnInit, OnDestroy {
 
   priorityLayer!: Layer;
 
-  @ViewChild("matrix", { static: false })
-  myCanvas: ElementRef<HTMLCanvasElement> = {} as ElementRef<any>;
-
-  matrixContext!: CanvasRenderingContext2D | null;
+  @ViewChild("priorityList")
+  priorityListElement!: MatSelectionList;
 
   newPriorityItem?: string;
   newPriority?: number;
@@ -281,5 +274,10 @@ export class AppComponent implements OnInit, OnDestroy {
       ) as Circle[];
       circles.forEach((circle) => circle.radius(this.options.circleRadius));
     });
+  }
+
+  handleOptionSelect() {
+    console.log("Option selected");
+    this.priorityListElement.deselectAll();
   }
 }

@@ -31,3 +31,9 @@ mat-sidenav-container {
   z-index: 1;
   margin: 1em;
 }
+
+.mat-list-single-selected-option,
+.mat-list-single-selected-option:hover,
+.mat-list-single-selected-option:focus {
+  background: inherit;
+}

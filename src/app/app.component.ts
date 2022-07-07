@@ -46,8 +46,8 @@ export class AppComponent implements OnInit {
   private initStage() {
     const stage = new Stage({
       container: "matrix", // id of container <div>
-      width: 500,
-      height: 500,
+      width: window.innerWidth * 0.8,
+      height: window.innerHeight * 0.8,
     });
 
     this.helper = new KonvaHelper(stage);

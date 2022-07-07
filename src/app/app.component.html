@@ -38,18 +38,16 @@
     </mat-sidenav>
 
     <mat-sidenav-content fxLayout>
-      <div fxFlex fxLayout>
-        <mat-card id="canvas-container">
-          <button mat-icon-button (click)="sidenav.toggle()">
-            <mat-icon aria-label="label">menu</mat-icon>
-          </button>
-          <div id="matrix"></div>
-          <div fxFlex></div>
-          <button mat-icon-button (click)="settings.toggle()">
-            <mat-icon aria-label="label">settings</mat-icon>
-          </button>
-        </mat-card>
-      </div>
+      <mat-card id="canvas-container" fxFlexFill fxLayout>
+        <button mat-icon-button (click)="sidenav.toggle()">
+          <mat-icon aria-label="label">menu</mat-icon>
+        </button>
+        <div id="matrix"></div>
+        <div fxFlex></div>
+        <button mat-icon-button (click)="settings.toggle()">
+          <mat-icon aria-label="label">settings</mat-icon>
+        </button>
+      </mat-card>
     </mat-sidenav-content>
 
     <mat-sidenav

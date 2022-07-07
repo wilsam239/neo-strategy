@@ -10,26 +10,28 @@
             (keyup.enter)="addListItem()"
           />
         </mat-form-field>
-        <mat-form-field appearance="outline" fxFill>
-          <mat-label>Resources Required</mat-label>
-          <input
-            matInput
-            type="number"
-            min="0"
-            max="10"
-            [(ngModel)]="newResource"
-          />
-        </mat-form-field>
-        <mat-form-field appearance="outline" fxFill>
-          <mat-label>Priority</mat-label>
-          <input
-            matInput
-            type="number"
-            min="0"
-            max="10"
-            [(ngModel)]="newPriority"
-          />
-        </mat-form-field>
+        <div fxLayout>
+          <mat-form-field appearance="outline" fxFlex="50">
+            <mat-label>Resources Required</mat-label>
+            <input
+              matInput
+              type="number"
+              min="0"
+              max="10"
+              [(ngModel)]="newResource"
+            />
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="50">
+            <mat-label>Priority</mat-label>
+            <input
+              matInput
+              type="number"
+              min="0"
+              max="10"
+              [(ngModel)]="newPriority"
+            />
+          </mat-form-field>
+        </div>
         <button
           mat-raised-button
           (click)="addListItem()"

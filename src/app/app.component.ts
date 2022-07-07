@@ -1,4 +1,10 @@
-import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
+import {
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from "@angular/core";
 import { Group } from "konva/lib/Group";
 import { Layer } from "konva/lib/Layer";
 import { KonvaEventObject } from "konva/lib/Node";
@@ -6,6 +12,7 @@ import { Circle } from "konva/lib/shapes/Circle";
 import { Line } from "konva/lib/shapes/Line";
 import { Text } from "konva/lib/shapes/Text";
 import { Stage } from "konva/lib/Stage";
+import { debounceTime, fromEvent, Subscription, tap } from "rxjs";
 import { KonvaHelper } from "./konva-helper";
 
 interface PriorityItem {
@@ -18,7 +25,8 @@ interface PriorityItem {
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.scss"],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
+  subs: Subscription[] = [];
   title = "neo-strategy";
 
   priorities: PriorityItem[] = [];
@@ -41,6 +49,21 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.initStage();
+
+    this.subs.push(
+      fromEvent(window, "resize")
+        .pipe(
+          debounceTime(100),
+          tap(() => {
+            this.helper.resizeStage(window.innerWidth, window.innerHeight);
+          })
+        )
+        .subscribe()
+    );
+  }
+
+  ngOnDestroy() {
+    this.subs.forEach((s) => s.unsubscribe());
   }
 
   private initStage() {
@@ -72,10 +95,10 @@ export class AppComponent implements OnInit {
 
     const xAxis = new Line({
       points: [
-        10,
-        this.helper.stage.height() * 0.8,
-        this.helper.stage.width() * 0.8,
-        this.helper.stage.height() * 0.8,
+        50,
+        this.helper.stage.height() * 0.9,
+        this.helper.stage.width() * 0.9,
+        this.helper.stage.height() * 0.9,
       ],
       stroke: "white",
       strokeWidth: 5,
@@ -84,7 +107,12 @@ export class AppComponent implements OnInit {
     });
 
     const yAxis = new Line({
-      points: [10, 10, 10, this.helper.stage.height() * 0.8],
+      points: [
+        50,
+        this.helper.stage.height() * 0.1,
+        50,
+        this.helper.stage.height() * 0.9,
+      ],
       stroke: "white",
       strokeWidth: 5,
       id: "yAxisLine",

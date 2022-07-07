@@ -49,6 +49,13 @@ export class KonvaHelper {
     return item.getChildren((child) => child.className === className);
   }
 
+  resizeStage(width: number, height: number) {
+    console.log(width);
+    console.log(height);
+    this.stage.width(width);
+    this.stage.height(height);
+  }
+
   generateId(length = 10) {
     var result = "";
     var characters =

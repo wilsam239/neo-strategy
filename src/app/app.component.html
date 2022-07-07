@@ -3,11 +3,31 @@
     <mat-sidenav #sidenav mode="over" opened class="sidenav" position="start">
       <div id="priority-list">
         <mat-form-field appearance="outline" fxFill>
+          <mat-label>New Priority</mat-label>
           <input
             matInput
-            [(ngModel)]="newPriority"
-            placeholder="New priority..."
+            [(ngModel)]="newPriorityItem"
             (keyup.enter)="addListItem()"
+          />
+        </mat-form-field>
+        <mat-form-field appearance="outline" fxFill>
+          <mat-label>Resources Required</mat-label>
+          <input
+            matInput
+            type="number"
+            min="0"
+            max="10"
+            [(ngModel)]="newResource"
+          />
+        </mat-form-field>
+        <mat-form-field appearance="outline" fxFill>
+          <mat-label>Priority</mat-label>
+          <input
+            matInput
+            type="number"
+            min="0"
+            max="10"
+            [(ngModel)]="newPriority"
           />
         </mat-form-field>
         <button

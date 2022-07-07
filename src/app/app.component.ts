@@ -20,6 +20,10 @@ interface PriorityItem {
   title: string;
   icon?: string;
 }
+
+const AXES_PERCENTAGE = 0.9;
+const AXES_START = 50;
+
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
@@ -38,7 +42,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
   matrixContext!: CanvasRenderingContext2D | null;
 
-  newPriority?: string;
+  newPriorityItem?: string;
+  newPriority?: number;
+  newResource?: number;
+
   helper!: KonvaHelper;
 
   options: {
@@ -46,6 +53,9 @@ export class AppComponent implements OnInit, OnDestroy {
   } = {
     circleRadius: 25,
   };
+
+  xAxisLength = window.innerWidth * AXES_PERCENTAGE;
+  yAxisHeight = window.innerHeight * AXES_PERCENTAGE;
 
   ngOnInit() {
     this.initStage();
@@ -56,6 +66,8 @@ export class AppComponent implements OnInit, OnDestroy {
           debounceTime(100),
           tap(() => {
             this.helper.resizeStage(window.innerWidth, window.innerHeight);
+            this.xAxisLength = this.helper.stage.width() * AXES_PERCENTAGE;
+            this.yAxisHeight = this.helper.stage.height() * AXES_PERCENTAGE;
           })
         )
         .subscribe()
@@ -86,7 +98,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private makeFakeList(length = 5) {
     for (let i = 0; i < length; i++) {
-      this.newPriority = this.helper.generateId(15);
+      this.newPriorityItem = this.helper.generateId(15);
       this.addListItem({ x: i * 50 + 100, y: i * 50 + 100 });
     }
   }
@@ -95,10 +107,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
     const xAxis = new Line({
       points: [
-        50,
-        this.helper.stage.height() * 0.9,
-        this.helper.stage.width() * 0.9,
-        this.helper.stage.height() * 0.9,
+        AXES_START,
+        this.helper.stage.height() * AXES_PERCENTAGE,
+        this.helper.stage.width() * AXES_PERCENTAGE,
+        this.helper.stage.height() * AXES_PERCENTAGE,
       ],
       stroke: "white",
       strokeWidth: 5,
@@ -108,10 +120,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
     const yAxis = new Line({
       points: [
-        50,
+        AXES_START,
         this.helper.stage.height() * 0.1,
-        50,
-        this.helper.stage.height() * 0.9,
+        AXES_START,
+        this.helper.stage.height() * AXES_PERCENTAGE,
       ],
       stroke: "white",
       strokeWidth: 5,
@@ -127,21 +139,42 @@ export class AppComponent implements OnInit, OnDestroy {
     this.helper.addToStage(axisLayer);
   }
   addListItem(pos?: { x: number; y: number }) {
-    if (!this.newPriority) {
+    if (!this.newPriorityItem) {
       console.error("No priority entered");
       return;
+    }
+
+    if (!pos) {
+      pos = {
+        x: this.helper.stage.width() / 2,
+        y: this.helper.stage.height() / 2,
+      };
+    }
+
+    if (this.newPriority) {
+      this.newPriority = this.newPriority > 10 ? 10 : this.newPriority;
+      pos.x = AXES_START + (this.xAxisLength / 10) * this.newPriority;
+    }
+
+    if (this.newResource) {
+      // resources are on y axis (for now), so we need to flip the value (if 2, it becomes 8 etc)
+      // Done by doing 10 - value, then taking the absolute value
+      // So if val is 8, 10 - 2 == 8
+      this.newResource = this.newResource > 10 ? 10 : this.newResource;
+      const flippedResource = 10 - this.newResource;
+      pos.y = AXES_START + (this.yAxisHeight / 10) * flippedResource;
     }
 
     const newId = this.helper.generateId();
 
     const elementNum = this.priorities.push({
-      title: this.newPriority,
+      title: this.newPriorityItem,
       id: newId,
     });
 
     const priorityGroup = new Group({
-      x: pos?.x ?? this.helper.stage.width() / 2,
-      y: pos?.y ?? this.helper.stage.height() / 2,
+      x: pos.x,
+      y: pos.y,
       id: newId,
       draggable: true,
     });
@@ -181,6 +214,8 @@ export class AppComponent implements OnInit, OnDestroy {
 
     this.priorityLayer.draw();
     this.newPriority = undefined;
+    this.newPriorityItem = undefined;
+    this.newResource = undefined;
   }
 
   removeListItem(i: number) {

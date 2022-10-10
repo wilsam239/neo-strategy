@@ -1,14 +1,14 @@
-import { Component, OnDestroy, OnInit, ViewChild } from "@angular/core";
-import { MatSelectionList } from "@angular/material/list";
-import { Group } from "konva/lib/Group";
-import { Layer } from "konva/lib/Layer";
-import { KonvaEventObject } from "konva/lib/Node";
-import { Circle } from "konva/lib/shapes/Circle";
-import { Line } from "konva/lib/shapes/Line";
-import { Text } from "konva/lib/shapes/Text";
-import { Stage } from "konva/lib/Stage";
-import { debounceTime, fromEvent, Subscription, tap } from "rxjs";
-import { KonvaHelper } from "./konva-helper";
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatSelectionList } from '@angular/material/list';
+import { Group } from 'konva/lib/Group';
+import { Layer } from 'konva/lib/Layer';
+import { KonvaEventObject } from 'konva/lib/Node';
+import { Circle } from 'konva/lib/shapes/Circle';
+import { Line } from 'konva/lib/shapes/Line';
+import { Text } from 'konva/lib/shapes/Text';
+import { Stage } from 'konva/lib/Stage';
+import { debounceTime, fromEvent, Subscription, tap } from 'rxjs';
+import { KonvaHelper } from './konva-helper';
 
 interface Position {
   x: number;
@@ -25,19 +25,19 @@ const AXES_PERCENTAGE = 0.9;
 const AXES_START = 50;
 
 @Component({
-  selector: "app-root",
-  templateUrl: "./app.component.html",
-  styleUrls: ["./app.component.scss"],
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit, OnDestroy {
   subs: Subscription[] = [];
-  title = "neo-strategy";
+  title = 'neo-strategy';
 
   priorities: PriorityItem[] = [];
 
   priorityLayer!: Layer;
 
-  @ViewChild("priorityList")
+  @ViewChild('priorityList')
   priorityListElement!: MatSelectionList;
 
   newPriorityItem?: string;
@@ -59,7 +59,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.initStage();
 
     this.subs.push(
-      fromEvent(window, "resize")
+      fromEvent(window, 'resize')
         .pipe(
           debounceTime(100),
           tap(() => {
@@ -78,7 +78,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private initStage() {
     const stage = new Stage({
-      container: "matrix", // id of container <div>
+      container: 'matrix', // id of container <div>
       width: window.innerWidth,
       height: window.innerHeight,
     });
@@ -110,22 +110,17 @@ export class AppComponent implements OnInit, OnDestroy {
         this.helper.stage.width() * AXES_PERCENTAGE,
         this.helper.stage.height() * AXES_PERCENTAGE,
       ],
-      stroke: "white",
+      stroke: 'white',
       strokeWidth: 5,
-      id: "xAxisLine",
+      id: 'xAxisLine',
       exclude: true,
     });
 
     const yAxis = new Line({
-      points: [
-        AXES_START,
-        this.helper.stage.height() * 0.1,
-        AXES_START,
-        this.helper.stage.height() * AXES_PERCENTAGE,
-      ],
-      stroke: "white",
+      points: [AXES_START, this.helper.stage.height() * 0.1, AXES_START, this.helper.stage.height() * AXES_PERCENTAGE],
+      stroke: 'white',
       strokeWidth: 5,
-      id: "yAxisLine",
+      id: 'yAxisLine',
       exclude: true,
     });
 
@@ -139,7 +134,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   addListItem(pos?: Position) {
     if (!this.newPriorityItem) {
-      console.error("No priority entered");
+      console.error('No priority entered');
       return;
     }
 
@@ -161,36 +156,36 @@ export class AppComponent implements OnInit, OnDestroy {
 
     const newCircle = new Circle({
       radius: this.options.circleRadius,
-      fill: "white",
-      stroke: "black",
+      fill: 'white',
+      stroke: 'black',
       strokeWidth: 4,
     });
 
     const priorityLabel = new Text({
       text: `${elementNum}`,
       fontSize: 30,
-      fontFamily: "Calibri",
-      fill: "green",
+      fontFamily: 'Calibri',
+      fill: 'green',
     });
 
     const tooltip = this.helper.createTooltip(this.newPriorityItem);
 
-    priorityGroup.on("mouseover", function () {
-      document.body.style.cursor = "pointer";
+    priorityGroup.on('mouseover', function () {
+      document.body.style.cursor = 'pointer';
       tooltip.show();
-      newCircle.fill("green");
+      newCircle.fill('green');
     });
-    priorityGroup.on("mouseout", function () {
-      document.body.style.cursor = "default";
+    priorityGroup.on('mouseout', function () {
+      document.body.style.cursor = 'default';
       tooltip.hide();
-      newCircle.fill("white");
+      newCircle.fill('white');
     });
 
     this.helper.addTo(priorityGroup, newCircle);
     this.helper.addTo(priorityGroup, priorityLabel);
     this.helper.addTo(priorityGroup, tooltip);
 
-    priorityGroup.on("dragend", (e) => {
+    priorityGroup.on('dragend', (e) => {
       this.recalculatePriorities(e);
     });
 
@@ -237,11 +232,10 @@ export class AppComponent implements OnInit, OnDestroy {
     this.helper.priorityChildren.forEach((item) => {
       if (item instanceof Group) {
         item
-          .getChildren((child) => child.className === "Text")
+          .getChildren((child) => child.className === 'Text')
           .forEach((_textChild) => {
             const textChild = _textChild as Text;
-            const newIndex =
-              this.priorities.findIndex((p) => p.id === item.id()) + 1;
+            const newIndex = this.priorities.findIndex((p) => p.id === item.id()) + 1;
 
             if (newIndex > 0) {
               textChild.text(newIndex.toString());
@@ -252,7 +246,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   recalculatePriorities(e: KonvaEventObject<DragEvent>) {
-    console.log("Recalc priorities here");
+    console.log('Recalc priorities here');
   }
 
   handleKey(event: any) {
@@ -263,17 +257,14 @@ export class AppComponent implements OnInit, OnDestroy {
     const group = this.helper.fetchDrawnItem(id);
 
     if (group && group instanceof Group) {
-      const circles = this.helper.fetchChildrenOfType(
-        group,
-        "Circle"
-      ) as Circle[];
+      const circles = this.helper.fetchChildrenOfType(group, 'Circle') as Circle[];
 
       if (circles.length > 0) {
         circles.forEach((circle) => {
           if (over) {
-            circle.fill("green");
+            circle.fill('green');
           } else {
-            circle.fill("white");
+            circle.fill('white');
           }
         });
       }
@@ -281,18 +272,15 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   updateRadius() {
-    const groups = this.helper.fetchItemsOfType("Group") as Group[];
+    const groups = this.helper.fetchItemsOfType('Group') as Group[];
     groups.forEach((group) => {
-      const circles = this.helper.fetchChildrenOfType(
-        group,
-        "Circle"
-      ) as Circle[];
+      const circles = this.helper.fetchChildrenOfType(group, 'Circle') as Circle[];
       circles.forEach((circle) => circle.radius(this.options.circleRadius));
     });
   }
 
   handleOptionSelect() {
-    console.log("Option selected");
+    console.log('Option selected');
     this.priorityListElement.deselectAll();
   }
 }

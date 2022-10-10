@@ -12,49 +12,25 @@
       <div id="priority-list">
         <mat-form-field appearance="outline" fxFill>
           <mat-label>New Priority</mat-label>
-          <input
-            matInput
-            [(ngModel)]="newPriorityItem"
-            (keyup.enter)="addListItem()"
-          />
+          <input matInput [(ngModel)]="newPriorityItem" (keyup.enter)="addListItem()" />
         </mat-form-field>
         <div fxLayout>
           <mat-form-field appearance="outline" fxFlex="50">
             <mat-label>Resources Required</mat-label>
-            <input
-              matInput
-              type="number"
-              min="0"
-              max="10"
-              [(ngModel)]="newResource"
-            />
+            <input matInput type="number" min="0" max="10" [(ngModel)]="newResource" />
           </mat-form-field>
           <mat-form-field appearance="outline" fxFlex="50">
             <mat-label>Priority</mat-label>
-            <input
-              matInput
-              type="number"
-              min="0"
-              max="10"
-              [(ngModel)]="newPriority"
-            />
+            <input matInput type="number" min="0" max="10" [(ngModel)]="newPriority" />
           </mat-form-field>
         </div>
-        <button
-          mat-raised-button
-          (click)="addListItem()"
-          color="primary"
-          fxFill
-        >
-          New Item
-        </button>
+        <button mat-raised-button (click)="addListItem()" color="primary" fxFill>New Item</button>
         <mat-selection-list #priorityList [multiple]="false">
           <mat-list-option
             *ngFor="let item of priorities; let i = index"
             [value]="item"
             (mouseover)="handleHover(item.id, true)"
-            (mouseleave)="handleHover(item.id, false)"
-          >
+            (mouseleave)="handleHover(item.id, false)">
             <div fxLayout fxLayoutAlign=" center">
               <div>{{ i + 1 }}. {{ item.title }}</div>
               <div fxFlex></div>
@@ -79,14 +55,7 @@
       </button>
     </mat-sidenav-content>
 
-    <mat-sidenav
-      id="settings-sidenav"
-      #settings
-      mode="over"
-      [opened]="false"
-      class="sidenav"
-      position="end"
-    >
+    <mat-sidenav id="settings-sidenav" #settings mode="over" [opened]="false" class="sidenav" position="end">
       <div fxLayout fxLayoutAlign="center center">
         <button mat-icon-button (click)="settings.toggle()">
           <mat-icon aria-label="label">close</mat-icon>
@@ -97,9 +66,7 @@
       <div id="settings-list" fxLayout="column">
         <div id="circle-settings">
           <h2>Circle Settings</h2>
-          <p id="circle-settings-description">
-            Use the following options to modify the way that circles are drawn
-          </p>
+          <p id="circle-settings-description">Use the following options to modify the way that circles are drawn</p>
           <div id="radius-settings">
             <h3>Radius</h3>
             <mat-slider
@@ -108,8 +75,7 @@
               min="5"
               thumbLabel="true"
               [(ngModel)]="options.circleRadius"
-              (ngModelChange)="updateRadius()"
-            >
+              (ngModelChange)="updateRadius()">
             </mat-slider>
           </div>
         </div>

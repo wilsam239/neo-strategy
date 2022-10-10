@@ -103,7 +103,8 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   saveToLocalStorage() {
-    this.snack.open('Saving...', undefined, {
+    this.snack.open('Priorities Saved!', undefined, {
+      panelClass: 'green-snack',
       duration: 3000,
     });
 
@@ -432,4 +433,6 @@ export class AppComponent implements OnInit, OnDestroy {
     console.log('Option selected');
     this.priorityListElement.deselectAll();
   }
+
+  showInfoCard() {}
 }

@@ -8,8 +8,8 @@
   }
 }
 
-#settings-list {
-  max-width: 200px;
+.rhs-sidenav-list {
+  max-width: 300px;
 }
 
 mat-sidenav-container {
@@ -72,4 +72,10 @@ mat-sidenav-container {
 #priority-input-box-icon-row {
   top: 20px;
   position: relative;
+}
+
+.mat-expansion-panel-header {
+  mat-icon {
+    margin-right: 0.5em;
+  }
 }

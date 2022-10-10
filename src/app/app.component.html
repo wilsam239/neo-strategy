@@ -52,11 +52,15 @@
       </mat-card>
 
       <div fxLayout="row" id="rhs-actions" fxLayoutGap="1em">
-        <button mat-fab (click)="saveToLocalStorage()" id="save-button">
+        <button mat-fab (click)="help.toggle()" id="help-toggle" matTooltip="Open Help Menu">
+          <mat-icon aria-label="label">help</mat-icon>
+        </button>
+
+        <button mat-fab (click)="saveToLocalStorage()" id="save-button" matTooltip="Save Priorities">
           <mat-icon aria-label="label">save</mat-icon>
         </button>
 
-        <button mat-fab (click)="settings.toggle()" id="settings-toggle">
+        <button mat-fab (click)="settings.toggle()" id="settings-toggle" matTooltip="Open Settings Menu">
           <mat-icon aria-label="label">settings</mat-icon>
         </button>
       </div>
@@ -89,14 +93,14 @@
     </mat-sidenav-content>
 
     <mat-sidenav id="settings-sidenav" #settings mode="over" [opened]="false" class="sidenav" position="end">
-      <div fxLayout fxLayoutAlign="center center">
+      <div fxLayout fxLayoutAlign="start center">
         <button mat-icon-button (click)="settings.toggle()">
           <mat-icon aria-label="label">close</mat-icon>
         </button>
         <h1>Canvas Settings</h1>
       </div>
       <mat-divider></mat-divider>
-      <div id="settings-list" fxLayout="column">
+      <div class="rhs-sidenav-list" fxLayout="column">
         <div id="circle-settings">
           <h2>Circle Settings</h2>
           <p id="circle-settings-description">Use the following options to modify the way that circles are drawn</p>
@@ -114,5 +118,78 @@
         </div>
       </div>
     </mat-sidenav>
+
+    <mat-sidenav id="help-sidenav" #help mode="over" [opened]="false" class="sidenav" position="end">
+      <div fxLayout fxLayoutAlign="start center">
+        <button mat-icon-button (click)="help.toggle()">
+          <mat-icon aria-label="label">close</mat-icon>
+        </button>
+        <h1>Neo Strategy Help</h1>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="rhs-sidenav-list" fxLayout="column">
+        <div id="help-section">
+          <ng-container *ngTemplateOutlet="helpSectionAccordion"></ng-container>
+        </div>
+      </div>
+    </mat-sidenav>
   </mat-sidenav-container>
 </div>
+
+<ng-template #helpSectionAccordion>
+  <mat-accordion>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title><mat-icon>info</mat-icon> General Info</mat-panel-title>
+      </mat-expansion-panel-header>
+      <p>Thanks for using Neo Stategy.</p>
+      <p>
+        Neo Strategy features an auto save feature that saves your items every 2 minutes. You can also trigger a save
+        manually using the <mat-icon>save</mat-icon> button in the top right of the screen.
+      </p>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title><mat-icon>add_circle</mat-icon> Creating a Priority Item</mat-panel-title>
+      </mat-expansion-panel-header>
+      <h3>Canvas Method</h3>
+      <p>To create a new priority item, you can click on any blank space within the canvas.</p>
+      <p>After clicking an empty space, a box will appear that you can enter the priority item's name into.</p>
+      <p>
+        After entering the name, you can press the "enter" key to finalise it, or you can select the
+        <mat-icon aria-label="label">add_circle</mat-icon> button in the top left corner of the box.
+      </p>
+      <h3>List Method</h3>
+      <p>
+        Opening the left sidenav menu using the <mat-icon aria-label="label">menu</mat-icon> button will reveal the
+        manual input boxes for creating a new priority item.
+      </p>
+      <p>
+        You must enter a name for the priority item, and values for the x axis (priority) and the y axis (resources)
+      </p>
+      <p>After entering the name, simply click the "New Item" button to add it to the list</p>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title><mat-icon>remove_circle</mat-icon>Deleting a Priority Item</mat-panel-title>
+      </mat-expansion-panel-header>
+      <h3>Canvas Method</h3>
+      <p>Not yet implemented</p>
+      <h3>List Method</h3>
+      <p>
+        Opening the left sidenav menu using the <mat-icon aria-label="label">menu</mat-icon> button will reveal the list
+        of active priority items.
+      </p>
+      <p>
+        To remove an active priority, simply hit the <mat-icon>delete</mat-icon> button next to the name of the item in
+        the list.
+      </p>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title><mat-icon>open_with</mat-icon>Moving a Piority Item</mat-panel-title>
+      </mat-expansion-panel-header>
+      <p>To move a priority item, click on the priority item on the canvas and drag it to your desired location.</p>
+    </mat-expansion-panel>
+  </mat-accordion>
+</ng-template>

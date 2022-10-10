@@ -12,6 +12,8 @@ import { debounceTime, fromEvent, Subscription, tap } from 'rxjs';
 import { KonvaHelper } from './konva-helper';
 
 const FLOATING_INPUT_WIDTH = 250;
+const FLOATING_INPUT_HEIGHT = 80;
+
 interface Position {
   x: number;
   y: number;
@@ -70,7 +72,7 @@ export class AppComponent implements OnInit, OnDestroy {
         .pipe(
           debounceTime(100),
           tap(() => {
-            this.helper.resizeStage(window.innerWidth, window.innerHeight);
+            this.helper.resizeStage(window.innerWidth - 32, window.innerHeight - 32);
             this.xAxisLength = this.helper.stage.width() * AXES_PERCENTAGE;
             this.yAxisHeight = this.helper.stage.height() * AXES_PERCENTAGE;
           })
@@ -86,8 +88,8 @@ export class AppComponent implements OnInit, OnDestroy {
   private initStage() {
     const stage = new Stage({
       container: 'matrix', // id of container <div>
-      width: window.innerWidth,
-      height: window.innerHeight,
+      width: window.innerWidth - 32,
+      height: window.innerHeight - 32,
     });
 
     const stageDiv = document.getElementById('matrix');
@@ -113,16 +115,20 @@ export class AppComponent implements OnInit, OnDestroy {
       const mouseX = e.evt.clientX;
       const mouseY = e.evt.clientY;
 
-      let top = mouseY;
+      let top = mouseY - FLOATING_INPUT_HEIGHT / 2;
       let left = mouseX;
-
-      if (top >= window.innerHeight || top <= 0) {
-      }
 
       if (left + FLOATING_INPUT_WIDTH >= window.innerWidth || left <= 0) {
         if (left <= 0) {
         } else {
           left = window.innerWidth - FLOATING_INPUT_WIDTH;
+        }
+      }
+
+      if (top + FLOATING_INPUT_HEIGHT >= window.innerHeight || top <= 0) {
+        if (top <= 0) {
+        } else {
+          top = window.innerHeight - FLOATING_INPUT_HEIGHT * 2;
         }
       }
 

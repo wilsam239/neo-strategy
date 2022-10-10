@@ -24,13 +24,21 @@ mat-sidenav-container {
   margin: 1em;
 }
 
-#settings-toggle {
+#rhs-actions {
   position: fixed;
   top: 0;
   right: 0;
   z-index: 1;
   margin: 1em;
 }
+
+// #save-button {
+//   position: fixed;
+//   top: 0;
+//   right: 0;
+//   z-index: 1;
+//   margin: 1em;
+// }
 
 .mat-list-single-selected-option,
 .mat-list-single-selected-option:hover,

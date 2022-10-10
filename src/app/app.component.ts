@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSelectionList } from '@angular/material/list';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Group } from 'konva/lib/Group';
 import { Layer } from 'konva/lib/Layer';
 import { KonvaEventObject } from 'konva/lib/Node';
@@ -8,12 +9,16 @@ import { Circle } from 'konva/lib/shapes/Circle';
 import { Line } from 'konva/lib/shapes/Line';
 import { Text } from 'konva/lib/shapes/Text';
 import { Stage } from 'konva/lib/Stage';
-import { debounceTime, fromEvent, Subscription, tap } from 'rxjs';
+import { debounceTime, fromEvent, interval, Subscription, tap } from 'rxjs';
 import { KonvaHelper } from './konva-helper';
 
 const FLOATING_INPUT_WIDTH = 250;
 const FLOATING_INPUT_HEIGHT = 80;
 
+class LOCAL_STORAGE_KEYS {
+  static PRIORITIES = 'priorities';
+  static CONFIG = 'config';
+}
 interface Position {
   x: number;
   y: number;
@@ -23,6 +28,7 @@ interface PriorityItem {
   id: string;
   title: string;
   icon?: string;
+  position: Position;
 }
 
 const AXES_PERCENTAGE = 0.9;
@@ -63,7 +69,7 @@ export class AppComponent implements OnInit, OnDestroy {
   xAxisLength = window.innerWidth * AXES_PERCENTAGE;
   yAxisHeight = window.innerHeight * AXES_PERCENTAGE;
 
-  constructor(private dialog: MatDialog) {}
+  constructor(private dialog: MatDialog, private snack: MatSnackBar) {}
   ngOnInit() {
     this.initStage();
 
@@ -79,12 +85,49 @@ export class AppComponent implements OnInit, OnDestroy {
         )
         .subscribe()
     );
+
+    this.subs.push(
+      // auto save every 2 minutes
+      interval(2000 * 60)
+        .pipe(
+          tap(() => {
+            this.saveToLocalStorage();
+          })
+        )
+        .subscribe()
+    );
   }
 
   ngOnDestroy() {
     this.subs.forEach((s) => s.unsubscribe());
   }
 
+  saveToLocalStorage() {
+    this.snack.open('Saving...', undefined, {
+      duration: 3000,
+    });
+
+    const drawnItems: (PriorityItem | undefined)[] = this.priorities
+      .map((p) => {
+        const drawn = this.helper.fetchDrawnItem(p.id);
+
+        if (drawn) {
+          return {
+            id: p.id,
+            title: p.title,
+            position: {
+              x: drawn.x(),
+              y: drawn.y(),
+            },
+          };
+        } else {
+          return undefined;
+        }
+      })
+      .filter((p) => !!p);
+
+    window.localStorage.setItem(LOCAL_STORAGE_KEYS.PRIORITIES, JSON.stringify(drawnItems));
+  }
   private initStage() {
     const stage = new Stage({
       container: 'matrix', // id of container <div>
@@ -106,7 +149,8 @@ export class AppComponent implements OnInit, OnDestroy {
 
     this.helper.addToStage(this.priorityLayer);
     this.helper.refreshStage();
-    this.makeFakeList(15);
+    this.fetchFromLocalStorage();
+    // this.makeFakeList(15);
 
     stage.on('click', (e) => {
       if (!e.target.hasChildren()) {
@@ -136,6 +180,16 @@ export class AppComponent implements OnInit, OnDestroy {
       this.floatingInputDiv.style.left = left + 'px';
       this.floatingInputDiv.style.display = 'flex';
     });
+  }
+
+  private fetchFromLocalStorage() {
+    const found = window.localStorage.getItem(LOCAL_STORAGE_KEYS.PRIORITIES);
+
+    if (!!found) {
+      const priorities: PriorityItem[] = JSON.parse(found);
+      console.log('make ' + priorities.length + ' priorities');
+      priorities.forEach((p) => this.addPriority(p));
+    }
   }
 
   private makeFakeList(length = 5) {
@@ -168,10 +222,33 @@ export class AppComponent implements OnInit, OnDestroy {
       exclude: true,
     });
 
-    this.helper.addDrawnItem(xAxis, yAxis);
+    const yAxisLabel = new Text({
+      text: `Priority`,
+      fontSize: this.options.fontSize,
+      width: AXES_START + this.helper.stage.width() * AXES_PERCENTAGE,
+      fontFamily: 'Calibri',
+      fill: 'white',
+      align: 'center',
+      y: this.helper.stage.height() * AXES_PERCENTAGE + this.helper.stage.height() * 0.025,
+    });
+
+    const xAxisLabel = new Text({
+      text: `Resources Required`,
+      fontSize: this.options.fontSize,
+      width: this.helper.stage.height() * 0.1 + this.helper.stage.height() * AXES_PERCENTAGE,
+      rotationDeg: 270,
+      fontFamily: 'Calibri',
+      fill: 'white',
+      align: 'center',
+      x: AXES_START - this.helper.stage.width() * 0.025,
+      y: this.helper.stage.height() * 0.1 + this.helper.stage.height() * AXES_PERCENTAGE,
+    });
+
+    this.helper.addDrawnItem(xAxis, yAxis, yAxisLabel, xAxisLabel);
 
     this.helper.addTo(axisLayer, xAxis);
     this.helper.addTo(axisLayer, yAxis);
+    this.helper.addTo(axisLayer, yAxisLabel, xAxisLabel);
 
     this.helper.addToStage(axisLayer);
   }
@@ -201,15 +278,27 @@ export class AppComponent implements OnInit, OnDestroy {
 
     const newId = this.helper.generateId();
 
-    const elementNum = this.priorities.push({
+    const newItem: PriorityItem = {
       title: this.newPriorityItem,
       id: newId,
-    });
+      position: { x: pos.x, y: pos.y },
+    };
+
+    this.addPriority(newItem);
+
+    this.newPriority = undefined;
+    this.newPriorityItem = undefined;
+    this.newResource = undefined;
+  }
+
+  addPriority(p: PriorityItem) {
+    const elementNum = this.priorities.push(p);
+    console.log(p);
 
     const priorityGroup = new Group({
-      x: pos.x,
-      y: pos.y,
-      id: newId,
+      x: p.position.x,
+      y: p.position.y,
+      id: p.id,
       draggable: true,
     });
 
@@ -231,7 +320,7 @@ export class AppComponent implements OnInit, OnDestroy {
       offsetY: this.options.circleRadius / 2 - 2, // arbitrary - 2 here, looked more centered
     });
 
-    const tooltip = this.helper.createTooltip(this.newPriorityItem);
+    const tooltip = this.helper.createTooltip(p.title);
 
     priorityGroup.on('mouseover', () => {
       this.stageDiv!.classList.add('pointer');
@@ -256,9 +345,6 @@ export class AppComponent implements OnInit, OnDestroy {
     this.helper.addTo(this.priorityLayer, priorityGroup);
 
     this.priorityLayer.draw();
-    this.newPriority = undefined;
-    this.newPriorityItem = undefined;
-    this.newResource = undefined;
   }
 
   private getPosOfNewItem(pos?: Position) {

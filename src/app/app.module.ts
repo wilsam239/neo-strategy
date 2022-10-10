@@ -15,6 +15,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSliderModule } from '@angular/material/slider';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 const MATERIAL_LIBS = [
   MatCardModule,
@@ -26,6 +27,7 @@ const MATERIAL_LIBS = [
   MatSidenavModule,
   MatListModule,
   MatSliderModule,
+  MatSnackBarModule,
 ];
 
 @NgModule({

@@ -1,6 +1,6 @@
 <div fxFlexFill>
   <mat-sidenav-container>
-    <mat-sidenav #sidenav mode="over" opened class="sidenav" position="start">
+    <mat-sidenav #sidenav mode="over" class="sidenav" position="start">
       <div fxLayout fxLayoutAlign="center center">
         <h1>Priorities</h1>
         <div fxFlex></div>
@@ -50,9 +50,16 @@
       <mat-card id="canvas-container" fxFlexFill fxLayout>
         <div id="matrix"></div>
       </mat-card>
-      <button mat-fab (click)="settings.toggle()" id="settings-toggle">
-        <mat-icon aria-label="label">settings</mat-icon>
-      </button>
+
+      <div fxLayout="row" id="rhs-actions" fxLayoutGap="1em">
+        <button mat-fab (click)="saveToLocalStorage()" id="save-button">
+          <mat-icon aria-label="label">save</mat-icon>
+        </button>
+
+        <button mat-fab (click)="settings.toggle()" id="settings-toggle">
+          <mat-icon aria-label="label">settings</mat-icon>
+        </button>
+      </div>
 
       <div id="priority-input-box" fxLayout="column">
         <div fxLayout="row" id="priority-input-box-icon-row">

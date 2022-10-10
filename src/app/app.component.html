@@ -53,6 +53,15 @@
       <button mat-fab (click)="settings.toggle()" id="settings-toggle">
         <mat-icon aria-label="label">settings</mat-icon>
       </button>
+
+      <div id="priority-input-box">
+        <mat-card id="priority-input-box-outer">
+          <mat-form-field appearance="outline" fxFill>
+            <mat-label>New Priority</mat-label>
+            <input matInput [(ngModel)]="newPriorityItem" (keyup.enter)="addListItemFromFloat()" />
+          </mat-form-field>
+        </mat-card>
+      </div>
     </mat-sidenav-content>
 
     <mat-sidenav id="settings-sidenav" #settings mode="over" [opened]="false" class="sidenav" position="end">

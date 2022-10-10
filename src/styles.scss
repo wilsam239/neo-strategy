@@ -1,4 +1,30 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
+
+#priority-input-box {
+  width: 200px;
+  position: absolute;
+  display: none;
+  margin: 0.5em;
+  z-index: 10000;
+
+  #priority-input-box-outer {
+    padding: 0.5em;
+  }
+
+  .mat-form-field-wrapper {
+    padding-bottom: 0 !important;
+
+    .mat-form-field-subscript-wrapper {
+      display: none;
+    }
+  }
+}

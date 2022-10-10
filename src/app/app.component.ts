@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSelectionList } from '@angular/material/list';
 import { Group } from 'konva/lib/Group';
 import { Layer } from 'konva/lib/Layer';
@@ -10,6 +11,7 @@ import { Stage } from 'konva/lib/Stage';
 import { debounceTime, fromEvent, Subscription, tap } from 'rxjs';
 import { KonvaHelper } from './konva-helper';
 
+const FLOATING_INPUT_WIDTH = 200;
 interface Position {
   x: number;
   y: number;
@@ -30,6 +32,8 @@ const AXES_START = 50;
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit, OnDestroy {
+  stageDiv!: HTMLElement;
+  floatingInputDiv!: HTMLElement;
   subs: Subscription[] = [];
   title = 'neo-strategy';
 
@@ -48,13 +52,16 @@ export class AppComponent implements OnInit, OnDestroy {
 
   options: {
     circleRadius: number;
+    fontSize: number;
   } = {
     circleRadius: 25,
+    fontSize: 25,
   };
 
   xAxisLength = window.innerWidth * AXES_PERCENTAGE;
   yAxisHeight = window.innerHeight * AXES_PERCENTAGE;
 
+  constructor(private dialog: MatDialog) {}
   ngOnInit() {
     this.initStage();
 
@@ -83,6 +90,12 @@ export class AppComponent implements OnInit, OnDestroy {
       height: window.innerHeight,
     });
 
+    const stageDiv = document.getElementById('matrix');
+    if (stageDiv !== null) this.stageDiv = stageDiv;
+
+    const floatingInputDiv = document.getElementById('priority-input-box');
+    if (floatingInputDiv !== null) this.floatingInputDiv = floatingInputDiv;
+
     this.helper = new KonvaHelper(stage);
 
     this.priorityLayer = new Layer();
@@ -92,6 +105,31 @@ export class AppComponent implements OnInit, OnDestroy {
     this.helper.addToStage(this.priorityLayer);
     this.helper.refreshStage();
     this.makeFakeList(15);
+
+    stage.on('click', (e) => {
+      if (!e.target.hasChildren()) {
+        return;
+      }
+      const mouseX = e.evt.clientX;
+      const mouseY = e.evt.clientY;
+
+      let top = mouseY;
+      let left = mouseX;
+
+      if (top >= window.innerHeight || top <= 0) {
+      }
+
+      if (left + FLOATING_INPUT_WIDTH >= window.innerWidth || left <= 0) {
+        if (left <= 0) {
+        } else {
+          left = window.innerWidth - FLOATING_INPUT_WIDTH;
+        }
+      }
+
+      this.floatingInputDiv.style.top = top + 'px';
+      this.floatingInputDiv.style.left = left + 'px';
+      this.floatingInputDiv.style.display = 'block';
+    });
   }
 
   private makeFakeList(length = 5) {
@@ -132,6 +170,16 @@ export class AppComponent implements OnInit, OnDestroy {
     this.helper.addToStage(axisLayer);
   }
 
+  addListItemFromFloat() {
+    this.floatingInputDiv.style.display = 'none';
+    const pos: Position = {
+      x: parseInt(this.floatingInputDiv.style.left, 10),
+      y: parseInt(this.floatingInputDiv.style.top, 10),
+    };
+
+    this.addListItem(pos);
+  }
+
   addListItem(pos?: Position) {
     if (!this.newPriorityItem) {
       console.error('No priority entered');
@@ -163,20 +211,24 @@ export class AppComponent implements OnInit, OnDestroy {
 
     const priorityLabel = new Text({
       text: `${elementNum}`,
-      fontSize: 30,
+      fontSize: this.options.fontSize,
+      width: this.options.circleRadius,
       fontFamily: 'Calibri',
       fill: 'green',
+      align: 'center',
+      offsetX: this.options.circleRadius / 2,
+      offsetY: this.options.circleRadius / 2 - 2, // arbitrary - 2 here, looked more centered
     });
 
     const tooltip = this.helper.createTooltip(this.newPriorityItem);
 
-    priorityGroup.on('mouseover', function () {
-      document.body.style.cursor = 'pointer';
+    priorityGroup.on('mouseover', () => {
+      this.stageDiv!.classList.add('pointer');
       tooltip.show();
       newCircle.fill('green');
     });
-    priorityGroup.on('mouseout', function () {
-      document.body.style.cursor = 'default';
+    priorityGroup.on('mouseout', () => {
+      this.stageDiv!.classList.remove('pointer');
       tooltip.hide();
       newCircle.fill('white');
     });

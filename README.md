@@ -9,6 +9,7 @@ Neo Strategy is a tool to create an action priority matrix of tasks.
 - [x] Allow optional resources/priority fields
 - [x] Tooltips on hover
 - [x] Add priority item when clicking a blank space on canvas
+- [x] Add a help menu
 - [ ] Add a screenshot tool to export the as a PNG/PDF that shows the left sidenav and all the priorities
 - [ ] Delete priorities if X is pressed on hover
 - [ ] Dynamic resizing

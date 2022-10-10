@@ -4,7 +4,7 @@
       <div fxLayout fxLayoutAlign="center center">
         <h1>Priorities</h1>
         <div fxFlex></div>
-        <button mat-icon-button (click)="sidenav.toggle()">
+        <button mat-icon-button (click)="sidenav.toggle()" matTooltip="Close Priorities Menu">
           <mat-icon aria-label="label">close</mat-icon>
         </button>
       </div>
@@ -44,7 +44,7 @@
     </mat-sidenav>
 
     <mat-sidenav-content>
-      <button mat-fab (click)="sidenav.toggle()" id="priority-toggle">
+      <button mat-fab (click)="sidenav.toggle()" id="priority-toggle" matTooltip="Open Priorities Menu">
         <mat-icon aria-label="label">menu</mat-icon>
       </button>
       <mat-card id="canvas-container" fxFlexFill fxLayout>
@@ -94,7 +94,7 @@
 
     <mat-sidenav id="settings-sidenav" #settings mode="over" [opened]="false" class="sidenav" position="end">
       <div fxLayout fxLayoutAlign="start center">
-        <button mat-icon-button (click)="settings.toggle()">
+        <button mat-icon-button (click)="settings.toggle()" matTooltip="Close Settings Menu">
           <mat-icon aria-label="label">close</mat-icon>
         </button>
         <h1>Canvas Settings</h1>
@@ -121,7 +121,7 @@
 
     <mat-sidenav id="help-sidenav" #help mode="over" [opened]="false" class="sidenav" position="end">
       <div fxLayout fxLayoutAlign="start center">
-        <button mat-icon-button (click)="help.toggle()">
+        <button mat-icon-button (click)="help.toggle()" matTooltip="Close Help Menu">
           <mat-icon aria-label="label">close</mat-icon>
         </button>
         <h1>Neo Strategy Help</h1>

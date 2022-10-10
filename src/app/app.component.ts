@@ -11,7 +11,7 @@ import { Stage } from 'konva/lib/Stage';
 import { debounceTime, fromEvent, Subscription, tap } from 'rxjs';
 import { KonvaHelper } from './konva-helper';
 
-const FLOATING_INPUT_WIDTH = 200;
+const FLOATING_INPUT_WIDTH = 250;
 interface Position {
   x: number;
   y: number;
@@ -128,7 +128,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
       this.floatingInputDiv.style.top = top + 'px';
       this.floatingInputDiv.style.left = left + 'px';
-      this.floatingInputDiv.style.display = 'block';
+      this.floatingInputDiv.style.display = 'flex';
     });
   }
 
@@ -170,14 +170,19 @@ export class AppComponent implements OnInit, OnDestroy {
     this.helper.addToStage(axisLayer);
   }
 
-  addListItemFromFloat() {
+  hideFloater() {
     this.floatingInputDiv.style.display = 'none';
+    this.newPriorityItem = undefined;
+  }
+
+  addListItemFromFloat() {
     const pos: Position = {
       x: parseInt(this.floatingInputDiv.style.left, 10),
       y: parseInt(this.floatingInputDiv.style.top, 10),
     };
 
     this.addListItem(pos);
+    this.hideFloater();
   }
 
   addListItem(pos?: Position) {

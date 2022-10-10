@@ -46,3 +46,21 @@ mat-sidenav-container {
   cursor: pointer !important;
 }
 
+.priority-input-box-icon {
+  // position: relative;
+  // top: 20px;
+  z-index: 1;
+}
+
+#priority-input-box-left-icon {
+  left: -20px;
+}
+
+#priority-input-box-right-icon {
+  right: -20px;
+}
+
+#priority-input-box-icon-row {
+  top: 20px;
+  position: relative;
+}

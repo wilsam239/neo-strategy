@@ -54,7 +54,24 @@
         <mat-icon aria-label="label">settings</mat-icon>
       </button>
 
-      <div id="priority-input-box">
+      <div id="priority-input-box" fxLayout="column">
+        <div fxLayout="row" id="priority-input-box-icon-row">
+          <button
+            mat-icon-button
+            id="priority-input-box-left-icon"
+            class="priority-input-box-icon"
+            (click)="addListItemFromFloat()">
+            <mat-icon aria-label="label">add_circle</mat-icon>
+          </button>
+          <div fxFlex></div>
+          <button
+            mat-icon-button
+            id="priority-input-box-right-icon"
+            class="priority-input-box-icon"
+            (click)="hideFloater()">
+            <mat-icon aria-label="label">cancel</mat-icon>
+          </button>
+        </div>
         <mat-card id="priority-input-box-outer">
           <mat-form-field appearance="outline" fxFill>
             <mat-label>New Priority</mat-label>

@@ -11,6 +11,8 @@ import { Text } from 'konva/lib/shapes/Text';
 import { Stage } from 'konva/lib/Stage';
 import { debounceTime, fromEvent, interval, Subscription, tap } from 'rxjs';
 import { KonvaHelper } from './konva-helper';
+import { SettingsService } from './settings.service';
+import { ThemeService } from './theme.service';
 
 const FLOATING_INPUT_WIDTH = 250;
 const FLOATING_INPUT_HEIGHT = 80;
@@ -40,6 +42,8 @@ const AXES_START = 50;
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit, OnDestroy {
+  darkMode = true;
+
   stageDiv!: HTMLElement;
   floatingInputDiv!: HTMLElement;
   subs: Subscription[] = [];
@@ -58,18 +62,16 @@ export class AppComponent implements OnInit, OnDestroy {
 
   helper!: KonvaHelper;
 
-  options: {
-    circleRadius: number;
-    fontSize: number;
-  } = {
-    circleRadius: 25,
-    fontSize: 25,
-  };
-
   xAxisLength = window.innerWidth * AXES_PERCENTAGE;
   yAxisHeight = window.innerHeight * AXES_PERCENTAGE;
 
-  constructor(private dialog: MatDialog, private snack: MatSnackBar) {}
+  constructor(
+    private dialog: MatDialog,
+    private snack: MatSnackBar,
+    private themeService: ThemeService,
+    private settings: SettingsService
+  ) {}
+
   ngOnInit() {
     this.initStage();
 
@@ -225,7 +227,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
     const yAxisLabel = new Text({
       text: `Priority`,
-      fontSize: this.options.fontSize,
+      fontSize: this.settings.fontSize.getValue(),
       width: AXES_START + this.helper.stage.width() * AXES_PERCENTAGE,
       fontFamily: 'Calibri',
       fill: 'white',
@@ -235,7 +237,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
     const xAxisLabel = new Text({
       text: `Resources Required`,
-      fontSize: this.options.fontSize,
+      fontSize: this.settings.fontSize.getValue(),
       width: this.helper.stage.height() * 0.1 + this.helper.stage.height() * AXES_PERCENTAGE,
       rotationDeg: 270,
       fontFamily: 'Calibri',
@@ -304,7 +306,7 @@ export class AppComponent implements OnInit, OnDestroy {
     });
 
     const newCircle = new Circle({
-      radius: this.options.circleRadius,
+      radius: this.settings.circleRadius.getValue(),
       fill: 'white',
       stroke: 'black',
       strokeWidth: 4,
@@ -312,13 +314,13 @@ export class AppComponent implements OnInit, OnDestroy {
 
     const priorityLabel = new Text({
       text: `${elementNum}`,
-      fontSize: this.options.fontSize,
-      width: this.options.circleRadius,
+      fontSize: this.settings.fontSize.getValue(),
+      width: this.settings.circleRadius.getValue(),
       fontFamily: 'Calibri',
       fill: 'green',
       align: 'center',
-      offsetX: this.options.circleRadius / 2,
-      offsetY: this.options.circleRadius / 2 - 2, // arbitrary - 2 here, looked more centered
+      offsetX: this.settings.circleRadius.getValue() / 2,
+      offsetY: this.settings.circleRadius.getValue() / 2 - 2, // arbitrary - 2 here, looked more centered
     });
 
     const tooltip = this.helper.createTooltip(p.title);
@@ -419,14 +421,6 @@ export class AppComponent implements OnInit, OnDestroy {
         });
       }
     }
-  }
-
-  updateRadius() {
-    const groups = this.helper.fetchItemsOfType('Group') as Group[];
-    groups.forEach((group) => {
-      const circles = this.helper.fetchChildrenOfType(group, 'Circle') as Circle[];
-      circles.forEach((circle) => circle.radius(this.options.circleRadius));
-    });
   }
 
   handleOptionSelect() {

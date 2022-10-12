@@ -93,30 +93,7 @@
     </mat-sidenav-content>
 
     <mat-sidenav id="settings-sidenav" #settings mode="over" [opened]="false" class="sidenav" position="end">
-      <div fxLayout fxLayoutAlign="start center">
-        <button mat-icon-button (click)="settings.toggle()" matTooltip="Close Settings Menu">
-          <mat-icon aria-label="label">close</mat-icon>
-        </button>
-        <h1>Canvas Settings</h1>
-      </div>
-      <mat-divider></mat-divider>
-      <div class="rhs-sidenav-list" fxLayout="column">
-        <div id="circle-settings">
-          <h2>Circle Settings</h2>
-          <p id="circle-settings-description">Use the following options to modify the way that circles are drawn</p>
-          <div id="radius-settings">
-            <h3>Radius</h3>
-            <mat-slider
-              fxFill
-              max="100"
-              min="5"
-              thumbLabel="true"
-              [(ngModel)]="options.circleRadius"
-              (ngModelChange)="updateRadius()">
-            </mat-slider>
-          </div>
-        </div>
-      </div>
+      <app-settings [helper]="helper" [menu]="settings"> </app-settings>
     </mat-sidenav>
 
     <mat-sidenav id="help-sidenav" #help mode="over" [opened]="false" class="sidenav" position="end">

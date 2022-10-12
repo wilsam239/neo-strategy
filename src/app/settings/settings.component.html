@@ -1,0 +1,80 @@
+<div fxLayout fxLayoutAlign="start center">
+  <button mat-icon-button (click)="menu.toggle()" matTooltip="Close Settings Menu">
+    <mat-icon aria-label="label">close</mat-icon>
+  </button>
+  <h1>Canvas Settings</h1>
+</div>
+<mat-divider></mat-divider>
+<div class="rhs-sidenav-list" fxLayout="column">
+  <div id="settings-section">
+    <mat-accordion>
+      <mat-expansion-panel *ngIf="settings.circleRadius | async as circleRadius">
+        <mat-expansion-panel-header>
+          <mat-panel-title><mat-icon>info</mat-icon> Circle Settings</mat-panel-title>
+        </mat-expansion-panel-header>
+        <h3>Radius</h3>
+        <mat-slider fxFill max="100" min="5" thumbLabel="true" (valueChange)="updateRadius($event)"> </mat-slider>
+      </mat-expansion-panel>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title><mat-icon>add_circle</mat-icon> Appearance</mat-panel-title>
+        </mat-expansion-panel-header>
+        <ng-container *ngTemplateOutlet="themesSection"></ng-container>
+      </mat-expansion-panel>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title><mat-icon>remove_circle</mat-icon>Deleting a Priority Item</mat-panel-title>
+        </mat-expansion-panel-header>
+        <h3>Canvas Method</h3>
+        <p>Not yet implemented</p>
+        <h3>List Method</h3>
+        <p>
+          Opening the left sidenav menu using the <mat-icon aria-label="label">menu</mat-icon> button will reveal the
+          list of active priority items.
+        </p>
+        <p>
+          To remove an active priority, simply hit the <mat-icon>delete</mat-icon> button next to the name of the item
+          in the list.
+        </p>
+      </mat-expansion-panel>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title><mat-icon>open_with</mat-icon>Moving a Piority Item</mat-panel-title>
+        </mat-expansion-panel-header>
+        <p>To move a priority item, click on the priority item on the canvas and drag it to your desired location.</p>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+</div>
+
+<ng-template #themesSection>
+  <mat-selection-list #themeList [multiple]="false" (selectionChange)="themeChangeHandler($event)">
+    <mat-list-option *ngFor="let option of themes" [value]="option">
+      <mat-icon mat-list-icon>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          width="100%"
+          height="100%"
+          viewBox="0 0 80 80"
+          fit=""
+          preserveAspectRatio="xMidYMid meet"
+          focusable="false">
+          <defs>
+            <path
+              d="M77.87 0C79.05 0 80 .95 80 2.13v75.74c0 1.17-.95 2.13-2.13 2.13H2.13C.96 80 0 79.04 0 77.87V2.13C0 .95.96 0 2.13 0h75.74z"
+              id="a"></path>
+            <path
+              d="M54 40c3.32 0 6 2.69 6 6 0 1.2 0-1.2 0 0 0 3.31-2.68 6-6 6H26c-3.31 0-6-2.69-6-6 0-1.2 0 1.2 0 0 0-3.31 2.69-6 6-6h28z"
+              id="b"></path>
+            <path d="M0 0h80v17.24H0V0z" id="c"></path>
+          </defs>
+          <use xlink:href="#a" [attr.fill]="option.backgroundColor"></use>
+          <use xlink:href="#b" [attr.fill]="option.buttonColor"></use>
+          <use xlink:href="#c" [attr.fill]="option.headingColor"></use>
+        </svg>
+      </mat-icon>
+      <div mat-line>{{ option.label }}</div>
+    </mat-list-option>
+  </mat-selection-list>
+</ng-template>

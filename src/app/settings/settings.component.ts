@@ -3,7 +3,7 @@ import { MatSelectionList, MatSelectionListChange } from '@angular/material/list
 import { MatSidenav } from '@angular/material/sidenav';
 import { Group } from 'konva/lib/Group';
 import { Circle } from 'konva/lib/shapes/Circle';
-import { Subscription, tap } from 'rxjs';
+import { filter, Subscription, tap } from 'rxjs';
 import { KonvaHelper } from '../konva-helper';
 import { SettingsService } from '../settings.service';
 import { Theme, ThemeService } from '../theme.service';
@@ -11,7 +11,7 @@ import { Theme, ThemeService } from '../theme.service';
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.scss'],
+  styleUrls: ['./settings.component.scss', '../app.component.scss'],
 })
 export class SettingsComponent implements OnInit {
   private subs: Subscription[] = [];
@@ -24,6 +24,8 @@ export class SettingsComponent implements OnInit {
 
   themes!: Theme[];
 
+  currentlyDark!: boolean;
+
   @ViewChild('themeList')
   themeList!: MatSelectionList;
 
@@ -31,6 +33,19 @@ export class SettingsComponent implements OnInit {
 
   ngOnInit(): void {
     this.themes = this.themeService.themes;
+
+    this.subs.push(
+      this.themeService.activeTheme
+        .pipe(
+          filter((theme) => theme.isDark !== this.currentlyDark),
+          tap((theme) => {
+            this.currentlyDark = theme.isDark;
+            // change text colours and stuff here
+            console.log(`We are now ${this.currentlyDark ? 'dark' : 'light'}`);
+          })
+        )
+        .subscribe()
+    );
 
     this.subs.push(
       this.settings.circleRadius
@@ -59,6 +74,7 @@ export class SettingsComponent implements OnInit {
       this.settings.circleRadius.next(radius);
     }
   }
+
   themeChangeHandler(event: MatSelectionListChange) {
     if (event.options[0]) {
       this.themeService.setTheme(event.options[0].value);

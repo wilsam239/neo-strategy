@@ -36,6 +36,13 @@ interface PriorityItem {
 const AXES_PERCENTAGE = 0.9;
 const AXES_START = 50;
 
+class ImportantIds {
+  static X_AXIS = 'xAxisLine';
+  static Y_AXIS = 'yAxisLine';
+  static X_MID_AXIS = 'midxAxisLine';
+  static Y_MID_AXIS = 'midyAxisLine';
+}
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -96,6 +103,21 @@ export class AppComponent implements OnInit, OnDestroy {
         .pipe(
           tap(() => {
             this.saveToLocalStorage();
+          })
+        )
+        .subscribe()
+    );
+
+    this.subs.push(
+      this.settings.showMidAxis
+        .pipe(
+          tap((b) => {
+            if (b) {
+              console.log('redraw them now');
+              this.initMiddleAxes();
+            } else {
+              [ImportantIds.X_MID_AXIS, ImportantIds.Y_MID_AXIS].forEach((mid) => this.helper.removeDrawnItem(mid));
+            }
           })
         )
         .subscribe()
@@ -215,7 +237,7 @@ export class AppComponent implements OnInit, OnDestroy {
       ],
       stroke: this.themeService.activeTheme.getValue().isDark ? 'white' : 'black',
       strokeWidth: 3,
-      id: 'xAxisLine',
+      id: ImportantIds.X_AXIS,
       exclude: true,
     });
 
@@ -223,7 +245,7 @@ export class AppComponent implements OnInit, OnDestroy {
       points: [AXES_START, this.helper.stage.height() * 0.1, AXES_START, this.helper.stage.height() * AXES_PERCENTAGE],
       stroke: this.themeService.activeTheme.getValue().isDark ? 'white' : 'black',
       strokeWidth: 3,
-      id: 'yAxisLine',
+      id: ImportantIds.Y_AXIS,
       exclude: true,
     });
 
@@ -258,6 +280,61 @@ export class AppComponent implements OnInit, OnDestroy {
     this.helper.addTo(axisLayer, yAxisLabel, xAxisLabel);
 
     this.helper.addToStage(axisLayer);
+  }
+
+  private initMiddleAxes() {
+    const midAxesLayer = new Layer();
+
+    const axes = this.helper.fetchItemsOfType('Line') as Line[];
+
+    const xAxis = axes.find((axis) => axis.id() === ImportantIds.X_AXIS);
+    const yAxis = axes.find((axis) => axis.id() === ImportantIds.Y_AXIS);
+
+    if (!xAxis) {
+      console.error('No axis line found for x axis with id: xAxisLine');
+      return;
+    }
+    if (!yAxis) {
+      console.error('No axis line found for y axis with id: yAxisLine');
+      return;
+    }
+
+    const lastX = xAxis.points().at(-2);
+    if (!lastX) {
+      console.error('2nd last point in xAxis is not defined');
+      return;
+    }
+    const lastY = yAxis.points().at(-1);
+    if (!lastY) {
+      console.error('Last point in yAxis is not defined');
+      return;
+    }
+
+    const middleX = (AXES_START + lastX) / 2;
+    const middleY = (this.helper.stage.height() * 0.1 + lastY) / 2;
+
+    console.log(middleX);
+    console.log(middleY);
+
+    const xMid = new Line({
+      points: [AXES_START, middleY, this.helper.stage.width() * AXES_PERCENTAGE, middleY],
+      stroke: this.themeService.activeTheme.getValue().isDark ? 'white' : 'black',
+      strokeWidth: 1,
+      id: ImportantIds.X_MID_AXIS,
+      exclude: true,
+    });
+
+    const yMid = new Line({
+      points: [middleX, this.helper.stage.height() * 0.1, middleX, this.helper.stage.height() * AXES_PERCENTAGE],
+      stroke: this.themeService.activeTheme.getValue().isDark ? 'white' : 'black',
+      strokeWidth: 1,
+      id: ImportantIds.Y_MID_AXIS,
+      exclude: true,
+    });
+
+    this.helper.addDrawnItem(xMid, yMid);
+    this.helper.addTo(midAxesLayer, xMid, yMid);
+    this.helper.addToStage(midAxesLayer);
   }
 
   hideFloater() {
@@ -402,7 +479,9 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   recalculatePriorities(e: KonvaEventObject<DragEvent>) {
-    console.log('Recalc priorities here');
+    this.helper.priorityChildren.forEach((p) => {
+      console.log('Pos: ' + p.x() + ', ' + p.y());
+    });
   }
 
   handleKey(event: any) {

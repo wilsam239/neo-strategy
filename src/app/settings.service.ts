@@ -15,6 +15,7 @@ export class SettingsService {
   readonly circleRadius = new BehaviorSubject(25);
   readonly circleFontSize = new BehaviorSubject(25);
   readonly axisLabelFontSize = new BehaviorSubject(25);
+  readonly showMidAxis = new BehaviorSubject(true);
 
   constructor() {}
 }

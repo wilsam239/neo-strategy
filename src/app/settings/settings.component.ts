@@ -42,6 +42,7 @@ export class SettingsComponent implements OnInit {
   axisFontSlider!: MatSlider;
 
   constrainSizeAndRadius = true;
+  showMiddleAxes = false;
 
   constructor(private themeService: ThemeService, public settings: SettingsService) {}
 
@@ -65,6 +66,8 @@ export class SettingsComponent implements OnInit {
 
     const curAxisFontSize = this.settings.axisLabelFontSize.getValue();
     this.axisFontSlider.value = curAxisFontSize;
+
+    this.showMiddleAxes = this.settings.showMidAxis.getValue();
   }
 
   initSettingsSubscriptions() {

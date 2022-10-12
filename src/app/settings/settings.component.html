@@ -44,6 +44,12 @@
         <mat-expansion-panel-header>
           <mat-panel-title><mat-icon>info</mat-icon> Axis Settings</mat-panel-title>
         </mat-expansion-panel-header>
+        <mat-slide-toggle
+          [(ngModel)]="showMiddleAxes"
+          (ngModelChange)="settings.showMidAxis.next($event)"
+          color="accent"
+          >Show Middle Axes
+        </mat-slide-toggle>
         <h3>Label Font Size</h3>
         <p>
           <mat-slider

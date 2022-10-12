@@ -213,16 +213,16 @@ export class AppComponent implements OnInit, OnDestroy {
         this.helper.stage.width() * AXES_PERCENTAGE,
         this.helper.stage.height() * AXES_PERCENTAGE,
       ],
-      stroke: 'white',
-      strokeWidth: 5,
+      stroke: this.themeService.activeTheme.getValue().isDark ? 'white' : 'black',
+      strokeWidth: 3,
       id: 'xAxisLine',
       exclude: true,
     });
 
     const yAxis = new Line({
       points: [AXES_START, this.helper.stage.height() * 0.1, AXES_START, this.helper.stage.height() * AXES_PERCENTAGE],
-      stroke: 'white',
-      strokeWidth: 5,
+      stroke: this.themeService.activeTheme.getValue().isDark ? 'white' : 'black',
+      strokeWidth: 3,
       id: 'yAxisLine',
       exclude: true,
     });
@@ -230,10 +230,10 @@ export class AppComponent implements OnInit, OnDestroy {
     const yAxisLabel = new Text({
       id: 'yAxisLabel',
       text: `Priority`,
-      circleFontSize: this.settings.circleFontSize.getValue(),
+      fontSize: this.settings.circleFontSize.getValue(),
       width: AXES_START + this.helper.stage.width() * AXES_PERCENTAGE,
       fontFamily: 'Calibri',
-      fill: 'white',
+      fill: this.themeService.activeTheme.getValue().isDark ? 'white' : 'black',
       align: 'center',
       y: this.helper.stage.height() * AXES_PERCENTAGE + this.helper.stage.height() * 0.025,
     });
@@ -241,11 +241,11 @@ export class AppComponent implements OnInit, OnDestroy {
     const xAxisLabel = new Text({
       id: 'xAxisLabel',
       text: `Resources Required`,
-      circleFontSize: this.settings.circleFontSize.getValue(),
+      fontSize: this.settings.circleFontSize.getValue(),
       width: this.helper.stage.height() * 0.1 + this.helper.stage.height() * AXES_PERCENTAGE,
       rotationDeg: 270,
       fontFamily: 'Calibri',
-      fill: 'white',
+      fill: this.themeService.activeTheme.getValue().isDark ? 'white' : 'black',
       align: 'center',
       x: AXES_START - this.helper.stage.width() * 0.025,
       y: this.helper.stage.height() * 0.1 + this.helper.stage.height() * AXES_PERCENTAGE,
@@ -313,7 +313,7 @@ export class AppComponent implements OnInit, OnDestroy {
       radius: this.settings.circleRadius.getValue(),
       fill: this.themeService.activeTheme.getValue().buttonColor,
       stroke: 'black',
-      strokeWidth: 4,
+      strokeWidth: 2,
     });
 
     const priorityLabel = new Text({

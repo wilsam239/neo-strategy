@@ -311,17 +311,17 @@ export class AppComponent implements OnInit, OnDestroy {
 
     const newCircle = new Circle({
       radius: this.settings.circleRadius.getValue(),
-      fill: 'white',
+      fill: this.themeService.activeTheme.getValue().buttonColor,
       stroke: 'black',
       strokeWidth: 4,
     });
 
     const priorityLabel = new Text({
       text: `${elementNum}`,
-      circleFontSize: this.settings.circleFontSize.getValue(),
+      fontSize: this.settings.circleFontSize.getValue(),
       width: this.settings.circleRadius.getValue(),
       fontFamily: 'Calibri',
-      fill: 'green',
+      fill: this.themeService.activeTheme.getValue().buttonTextColor,
       align: 'center',
       offsetX: this.settings.circleRadius.getValue() / 2,
       offsetY: this.settings.circleRadius.getValue() / 2 - 2, // arbitrary - 2 here, looked more centered
@@ -332,12 +332,12 @@ export class AppComponent implements OnInit, OnDestroy {
     priorityGroup.on('mouseover', () => {
       this.stageDiv!.classList.add('pointer');
       tooltip.show();
-      newCircle.fill('green');
+      newCircle.fill(this.themeService.activeTheme.getValue().headingColor);
     });
     priorityGroup.on('mouseout', () => {
       this.stageDiv!.classList.remove('pointer');
       tooltip.hide();
-      newCircle.fill('white');
+      newCircle.fill(this.themeService.activeTheme.getValue().buttonColor);
     });
 
     this.helper.addTo(priorityGroup, newCircle);

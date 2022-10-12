@@ -6,7 +6,7 @@ import { Group } from 'konva/lib/Group';
 import { Circle } from 'konva/lib/shapes/Circle';
 import { Line } from 'konva/lib/shapes/Line';
 import { Text } from 'konva/lib/shapes/Text';
-import { filter, Subscription, tap } from 'rxjs';
+import { Subscription, tap } from 'rxjs';
 import { KonvaHelper } from '../konva-helper';
 import { SettingsService } from '../settings.service';
 import { Theme, ThemeService } from '../theme.service';
@@ -106,15 +106,27 @@ export class SettingsComponent implements OnInit {
 
       this.themeService.activeTheme
         .pipe(
-          filter((theme) => theme.isDark !== this.currentlyDark),
           tap((theme) => {
-            this.currentlyDark = theme.isDark;
+            if (theme.isDark !== this.currentlyDark) {
+              this.currentlyDark = theme.isDark;
 
-            const axisLines = this.helper.fetchItemsOfType('Line') as Line[];
-            axisLines.forEach((line) => line.stroke(this.currentlyDark ? 'white' : 'black'));
+              const axisLines = this.helper.fetchItemsOfType('Line') as Line[];
+              axisLines.forEach((line) => line.stroke(this.currentlyDark ? 'white' : 'black'));
 
-            const axisLabels = this.helper.fetchItemsOfType('Text') as Text[];
-            axisLabels.forEach((label) => label.fill(this.currentlyDark ? 'white' : 'black'));
+              const axisLabels = this.helper.fetchItemsOfType('Text') as Text[];
+              axisLabels.forEach((label) => label.fill(this.currentlyDark ? 'white' : 'black'));
+            }
+            const groups = this.helper.fetchItemsOfType('Group') as Group[];
+            groups.forEach((group) => {
+              const circles = this.helper.fetchChildrenOfType(group, 'Circle') as Circle[];
+              circles.forEach((circle) => {
+                circle.fill(theme.buttonColor);
+              });
+              const labels = this.helper.fetchChildrenOfType(group, 'Text') as Text[];
+              labels.forEach((l) => {
+                l.fill(theme.buttonTextColor);
+              });
+            });
           })
         )
         .subscribe(),

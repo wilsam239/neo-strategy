@@ -5,6 +5,7 @@ import { StyleManagerService } from './style-manager.service';
 export interface Theme {
   backgroundColor: string;
   buttonColor: string;
+  buttonTextColor: string;
   headingColor: string;
   label: string;
   value: string;
@@ -14,6 +15,7 @@ export interface Theme {
 export const DEEPPURPLE_AMBER = {
   backgroundColor: '#fff',
   buttonColor: '#ffc107',
+  buttonTextColor: '#000000',
   headingColor: '#673ab7',
   label: 'Deep Purple & Amber',
   value: 'deeppurple-amber',
@@ -23,6 +25,7 @@ export const DEEPPURPLE_AMBER = {
 export const INDIGO_PINK = {
   backgroundColor: '#fff',
   buttonColor: '#ff4081',
+  buttonTextColor: '#ffffff',
   headingColor: '#3f51b5',
   label: 'Indigo & Pink',
   value: 'indigo-pink',
@@ -32,6 +35,7 @@ export const INDIGO_PINK = {
 export const PINK_BLUEGREY = {
   backgroundColor: '#303030',
   buttonColor: '#607d8b',
+  buttonTextColor: '#000000',
   headingColor: '#e91e63',
   label: 'Pink & Blue Grey',
   value: 'pink-bluegrey',
@@ -40,7 +44,8 @@ export const PINK_BLUEGREY = {
 
 export const PURPLE_GREEN = {
   backgroundColor: '#303030',
-  buttonColor: '#4caf50',
+  buttonColor: '#69f0ae',
+  buttonTextColor: '#000000',
   headingColor: '#9c27b0',
   label: 'Purple & Green',
   value: 'purple-green',

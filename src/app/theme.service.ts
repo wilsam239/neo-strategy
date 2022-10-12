@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { StyleManagerService } from './style-manager.service';
 
 export interface Theme {
   backgroundColor: string;
@@ -40,9 +41,9 @@ export class ThemeService {
       value: 'purple-green',
     },
   ];
-  constructor() {}
+  constructor(private styleManager: StyleManagerService) {}
 
   setTheme(themeToSet: Theme) {
-    // TODO(@SiddAjmera): Implement this later
+    this.styleManager.setStyle('theme', `assets/${themeToSet.value}.css`);
   }
 }

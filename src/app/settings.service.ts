@@ -14,7 +14,7 @@ type ThemeTypes = 'indigo-pink' | 'pink-bluegrey' | 'purple-green' | 'deeppurple
 export class SettingsService {
   readonly circleRadius = new BehaviorSubject(25);
   readonly fontSize = new BehaviorSubject(25);
-  readonly theme = new BehaviorSubject('deeppurple-amber');
+  readonly theme = new BehaviorSubject('purple-green');
 
   constructor() {}
 }

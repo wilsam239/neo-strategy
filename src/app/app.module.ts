@@ -22,6 +22,7 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { SettingsComponent } from './settings/settings.component';
+import { StyleManagerService } from './style-manager.service';
 import { ThemeService } from './theme.service';
 
 const MATERIAL_LIBS = [
@@ -45,7 +46,7 @@ const MATERIAL_LIBS = [
 @NgModule({
   declarations: [AppComponent, SettingsComponent],
   imports: [BrowserModule, BrowserAnimationsModule, FlexLayoutModule, FormsModule, ...MATERIAL_LIBS],
-  providers: [ThemeService],
+  providers: [ThemeService, StyleManagerService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

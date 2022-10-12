@@ -52,7 +52,7 @@
       </mat-card>
 
       <div fxLayout="row" id="rhs-actions" fxLayoutGap="1em">
-        <button mat-fab (click)="help.toggle()" id="help-toggle" matTooltip="Open Help Menu">
+        <button mat-fab (click)="activeRhs = 'help'; rhs.toggle()" id="help-toggle" matTooltip="Open Help Menu">
           <mat-icon aria-label="label">help</mat-icon>
         </button>
 
@@ -60,7 +60,11 @@
           <mat-icon aria-label="label">save</mat-icon>
         </button>
 
-        <button mat-fab (click)="settings.toggle()" id="settings-toggle" matTooltip="Open Settings Menu">
+        <button
+          mat-fab
+          (click)="activeRhs = 'settings'; rhs.toggle()"
+          id="settings-toggle"
+          matTooltip="Open Settings Menu">
           <mat-icon aria-label="label">settings</mat-icon>
         </button>
       </div>
@@ -71,7 +75,8 @@
             mat-icon-button
             id="priority-input-box-left-icon"
             class="priority-input-box-icon"
-            (click)="addListItemFromFloat()">
+            (click)="addListItemFromFloat()"
+            color="accent">
             <mat-icon aria-label="label">add_circle</mat-icon>
           </button>
           <div fxFlex></div>
@@ -79,7 +84,8 @@
             mat-icon-button
             id="priority-input-box-right-icon"
             class="priority-input-box-icon"
-            (click)="hideFloater()">
+            (click)="hideFloater()"
+            color="warn">
             <mat-icon aria-label="label">cancel</mat-icon>
           </button>
         </div>
@@ -92,23 +98,24 @@
       </div>
     </mat-sidenav-content>
 
-    <mat-sidenav id="settings-sidenav" #settings mode="over" [opened]="false" class="sidenav" position="end">
-      <app-settings [helper]="helper" [menu]="settings"> </app-settings>
-    </mat-sidenav>
-
-    <mat-sidenav id="help-sidenav" #help mode="over" [opened]="false" class="sidenav" position="end">
-      <div fxLayout fxLayoutAlign="start center">
-        <button mat-icon-button (click)="help.toggle()" matTooltip="Close Help Menu">
-          <mat-icon aria-label="label">close</mat-icon>
-        </button>
-        <h1>Neo Strategy Help</h1>
-      </div>
-      <mat-divider></mat-divider>
-      <div class="rhs-sidenav-list" fxLayout="column">
-        <div id="help-section">
-          <ng-container *ngTemplateOutlet="helpSectionAccordion"></ng-container>
+    <mat-sidenav id="rhs-sidenav" #rhs mode="over" [opened]="false" class="sidenav" position="end">
+      <ng-container *ngIf="activeRhs == 'settings'">
+        <app-settings [helper]="helper" [menu]="rhs"> </app-settings>
+      </ng-container>
+      <ng-container *ngIf="activeRhs == 'help'">
+        <div fxLayout fxLayoutAlign="start center">
+          <button mat-icon-button (click)="rhs.toggle()" matTooltip="Close Help Menu">
+            <mat-icon aria-label="label">close</mat-icon>
+          </button>
+          <h1>Neo Strategy Help</h1>
         </div>
-      </div>
+        <mat-divider></mat-divider>
+        <div class="rhs-sidenav-list" fxLayout="column">
+          <div id="help-section">
+            <ng-container *ngTemplateOutlet="helpSectionAccordion"></ng-container>
+          </div>
+        </div>
+      </ng-container>
     </mat-sidenav>
   </mat-sidenav-container>
 </div>

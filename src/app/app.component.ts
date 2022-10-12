@@ -65,6 +65,8 @@ export class AppComponent implements OnInit, OnDestroy {
   xAxisLength = window.innerWidth * AXES_PERCENTAGE;
   yAxisHeight = window.innerHeight * AXES_PERCENTAGE;
 
+  activeRhs!: 'help' | 'settings';
+
   constructor(
     private dialog: MatDialog,
     private snack: MatSnackBar,

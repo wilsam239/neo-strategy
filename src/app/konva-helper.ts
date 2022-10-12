@@ -1,5 +1,5 @@
 import { Group } from 'konva/lib/Group';
-import { Shape } from 'konva/lib/Shape';
+import { Shape, ShapeConfig } from 'konva/lib/Shape';
 import { Label, Tag } from 'konva/lib/shapes/Label';
 import { Text } from 'konva/lib/shapes/Text';
 import { Stage } from 'konva/lib/Stage';
@@ -39,7 +39,7 @@ export class KonvaHelper {
     this.stage.draw();
   }
 
-  fetchItemsOfType(className: string) {
+  fetchItemsOfType(className: string): (Group | Shape<ShapeConfig> | Text)[] {
     return Object.values(this.drawnItems).filter((i) => i.className === className || i.getType() === className);
   }
 
@@ -47,7 +47,7 @@ export class KonvaHelper {
     return this.drawnItems[id];
   }
 
-  fetchChildrenOfType(item: Group, className: string) {
+  fetchChildrenOfType(item: Group, className: string): (Group | Shape<ShapeConfig> | Text)[] {
     return item.getChildren((child) => child.className === className);
   }
 

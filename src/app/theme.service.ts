@@ -51,10 +51,21 @@ export class ThemeService {
   public themes: Theme[] = [PURPLE_GREEN, PINK_BLUEGREY, INDIGO_PINK, DEEPPURPLE_AMBER];
 
   readonly activeTheme = new BehaviorSubject(PURPLE_GREEN);
-  constructor(private styleManager: StyleManagerService) {}
+  constructor(private styleManager: StyleManagerService) {
+    const theme = window.localStorage.getItem('theme');
+
+    if (theme) {
+      const realTheme = this.themes.find((t) => theme === t.value);
+
+      this.setTheme(realTheme!);
+    } else {
+      this.setTheme(PURPLE_GREEN);
+    }
+  }
 
   setTheme(themeToSet: Theme) {
     this.styleManager.setStyle('theme', `assets/${themeToSet.value}.css`);
     this.activeTheme.next(themeToSet);
+    window.localStorage.setItem('theme', themeToSet.value);
   }
 }

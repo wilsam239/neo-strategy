@@ -226,8 +226,9 @@ export class AppComponent implements OnInit, OnDestroy {
     });
 
     const yAxisLabel = new Text({
+      id: 'yAxisLabel',
       text: `Priority`,
-      fontSize: this.settings.fontSize.getValue(),
+      circleFontSize: this.settings.circleFontSize.getValue(),
       width: AXES_START + this.helper.stage.width() * AXES_PERCENTAGE,
       fontFamily: 'Calibri',
       fill: 'white',
@@ -236,8 +237,9 @@ export class AppComponent implements OnInit, OnDestroy {
     });
 
     const xAxisLabel = new Text({
+      id: 'xAxisLabel',
       text: `Resources Required`,
-      fontSize: this.settings.fontSize.getValue(),
+      circleFontSize: this.settings.circleFontSize.getValue(),
       width: this.helper.stage.height() * 0.1 + this.helper.stage.height() * AXES_PERCENTAGE,
       rotationDeg: 270,
       fontFamily: 'Calibri',
@@ -314,7 +316,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
     const priorityLabel = new Text({
       text: `${elementNum}`,
-      fontSize: this.settings.fontSize.getValue(),
+      circleFontSize: this.settings.circleFontSize.getValue(),
       width: this.settings.circleRadius.getValue(),
       fontFamily: 'Calibri',
       fill: 'green',

@@ -3,7 +3,7 @@ import { BehaviorSubject } from 'rxjs';
 
 export interface Options {
   circleRadius: number;
-  fontSize: number;
+  circleFontSize: number;
 }
 
 type ThemeTypes = 'indigo-pink' | 'pink-bluegrey' | 'purple-green' | 'deeppurple-amber';
@@ -13,8 +13,8 @@ type ThemeTypes = 'indigo-pink' | 'pink-bluegrey' | 'purple-green' | 'deeppurple
 })
 export class SettingsService {
   readonly circleRadius = new BehaviorSubject(25);
-  readonly fontSize = new BehaviorSubject(25);
-  readonly theme = new BehaviorSubject('purple-green');
+  readonly circleFontSize = new BehaviorSubject(25);
+  readonly axisLabelFontSize = new BehaviorSubject(25);
 
   constructor() {}
 }

@@ -8,13 +8,6 @@
 <div class="rhs-sidenav-list" fxLayout="column">
   <div id="settings-section">
     <mat-accordion>
-      <mat-expansion-panel *ngIf="settings.circleRadius | async as circleRadius">
-        <mat-expansion-panel-header>
-          <mat-panel-title><mat-icon>info</mat-icon> Circle Settings</mat-panel-title>
-        </mat-expansion-panel-header>
-        <h3>Radius</h3>
-        <mat-slider fxFill max="100" min="5" thumbLabel="true" (valueChange)="updateRadius($event)"> </mat-slider>
-      </mat-expansion-panel>
       <mat-expansion-panel>
         <mat-expansion-panel-header>
           <mat-panel-title><mat-icon>palette</mat-icon> Theme</mat-panel-title>
@@ -23,25 +16,45 @@
       </mat-expansion-panel>
       <mat-expansion-panel>
         <mat-expansion-panel-header>
-          <mat-panel-title><mat-icon>remove_circle</mat-icon>Deleting a Priority Item</mat-panel-title>
+          <mat-panel-title><mat-icon>info</mat-icon> Priority Item Settings</mat-panel-title>
         </mat-expansion-panel-header>
-        <h3>Canvas Method</h3>
-        <p>Not yet implemented</p>
-        <h3>List Method</h3>
+
+        <mat-slide-toggle [(ngModel)]="constrainSizeAndRadius" color="accent"
+          >Constrain Font and Radius value
+        </mat-slide-toggle>
+
+        <h3>Circle Radius</h3>
         <p>
-          Opening the left sidenav menu using the <mat-icon aria-label="label">menu</mat-icon> button will reveal the
-          list of active priority items.
+          <mat-slider #radiusSlider fxFill max="100" min="5" thumbLabel="true" (valueChange)="updateRadius($event)">
+          </mat-slider>
         </p>
+        <h3>Label Font Size</h3>
         <p>
-          To remove an active priority, simply hit the <mat-icon>delete</mat-icon> button next to the name of the item
-          in the list.
+          <mat-slider
+            #circleFontSlider
+            fxFill
+            max="100"
+            min="5"
+            thumbLabel="true"
+            (valueChange)="updateCircleFontSize($event)">
+          </mat-slider>
         </p>
       </mat-expansion-panel>
       <mat-expansion-panel>
         <mat-expansion-panel-header>
-          <mat-panel-title><mat-icon>open_with</mat-icon>Moving a Piority Item</mat-panel-title>
+          <mat-panel-title><mat-icon>info</mat-icon> Axis Settings</mat-panel-title>
         </mat-expansion-panel-header>
-        <p>To move a priority item, click on the priority item on the canvas and drag it to your desired location.</p>
+        <h3>Label Font Size</h3>
+        <p>
+          <mat-slider
+            #axisFontSlider
+            fxFill
+            max="100"
+            min="5"
+            thumbLabel="true"
+            (valueChange)="updateAxisFontSize($event)">
+          </mat-slider>
+        </p>
       </mat-expansion-panel>
     </mat-accordion>
   </div>

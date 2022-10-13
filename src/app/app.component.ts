@@ -50,8 +50,6 @@ class ImportantIds {
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit, OnDestroy {
-  darkMode = true;
-
   stageDiv!: HTMLElement;
   floatingInputDiv!: HTMLElement;
   subs: Subscription[] = [];
@@ -130,7 +128,23 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.subs.forEach((s) => s.unsubscribe());
   }
+  /**
+   * Fetch the saved priorities from local storage
+   * this lets the user resume a session
+   */
+  private fetchFromLocalStorage() {
+    const found = window.localStorage.getItem(LOCAL_STORAGE_KEYS.PRIORITIES);
 
+    if (!!found) {
+      const priorities: PriorityItem[] = JSON.parse(found);
+      console.log('make ' + priorities.length + ' priorities');
+      priorities.forEach((p) => this.addPriority(p));
+    }
+  }
+
+  /**
+   * Save the stringifed priorities to local storage
+   */
   saveToLocalStorage() {
     this.snack.open('Priorities Saved!', undefined, {
       panelClass: 'green-snack',
@@ -158,6 +172,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
     window.localStorage.setItem(LOCAL_STORAGE_KEYS.PRIORITIES, JSON.stringify(drawnItems));
   }
+
+  /**
+   * Inits the Konva stage
+   */
   private initStage() {
     const stage = new Stage({
       container: 'matrix', // id of container <div>
@@ -191,47 +209,9 @@ export class AppComponent implements OnInit, OnDestroy {
     });
   }
 
-  private showInfoCard(e: KonvaEventObject<MouseEvent>) {
-    const mouseX = e.evt.clientX;
-    const mouseY = e.evt.clientY;
-
-    let top = mouseY - FLOATING_INPUT_HEIGHT / 2;
-    let left = mouseX;
-
-    if (left + FLOATING_INPUT_WIDTH >= window.innerWidth || left <= 0) {
-      if (left <= 0) {
-      } else {
-        left = window.innerWidth - FLOATING_INPUT_WIDTH;
-      }
-    }
-
-    if (top + FLOATING_INPUT_HEIGHT >= window.innerHeight || top <= 0) {
-      if (top <= 0) {
-      } else {
-        top = window.innerHeight - FLOATING_INPUT_HEIGHT * 2;
-      }
-    }
-
-    this.floatingInputDiv.style.top = top + 'px';
-    this.floatingInputDiv.style.left = left + 'px';
-    this.floatingInputDiv.style.display = 'flex';
-  }
-  private fetchFromLocalStorage() {
-    const found = window.localStorage.getItem(LOCAL_STORAGE_KEYS.PRIORITIES);
-
-    if (!!found) {
-      const priorities: PriorityItem[] = JSON.parse(found);
-      console.log('make ' + priorities.length + ' priorities');
-      priorities.forEach((p) => this.addPriority(p));
-    }
-  }
-
-  private makeFakeList(length = 5) {
-    for (let i = 0; i < length; i++) {
-      this.newPriorityItem = this.helper.generateId(15);
-      this.addListItem({ x: i * 50 + 100, y: i * 50 + 100 });
-    }
-  }
+  /**
+   * Inits the main x and y axes
+   */
   private initAxes() {
     const axisLayer = new Layer();
 
@@ -265,6 +245,7 @@ export class AppComponent implements OnInit, OnDestroy {
       fill: this.themeService.activeTheme.getValue().isDark ? 'white' : 'black',
       align: 'center',
       y: this.helper.stage.height() * AXES_PERCENTAGE + this.helper.stage.height() * 0.025,
+      exclude: true,
     });
 
     const xAxisLabel = new Text({
@@ -278,6 +259,7 @@ export class AppComponent implements OnInit, OnDestroy {
       align: 'center',
       x: AXES_START - this.helper.stage.width() * 0.025,
       y: this.helper.stage.height() * 0.1 + this.helper.stage.height() * AXES_PERCENTAGE,
+      exclude: true,
     });
 
     this.helper.addDrawnItem(xAxis, yAxis, yAxisLabel, xAxisLabel);
@@ -289,6 +271,10 @@ export class AppComponent implements OnInit, OnDestroy {
     this.helper.addToStage(axisLayer);
   }
 
+  /**
+   * Initialise the location of the middle axes
+   * @returns no return, but does exit early if xAxis or yAxis is not found
+   */
   private initMiddleAxes() {
     const midAxesLayer = new Layer();
 
@@ -345,11 +331,47 @@ export class AppComponent implements OnInit, OnDestroy {
     midAxesLayer.moveToBottom();
   }
 
+  /**
+   * Shows the floating priority card
+   * @param e The mouse event that triggered the card to open
+   */
+  private showInfoCard(e: KonvaEventObject<MouseEvent>) {
+    const mouseX = e.evt.clientX;
+    const mouseY = e.evt.clientY;
+
+    let top = mouseY - FLOATING_INPUT_HEIGHT / 2;
+    let left = mouseX;
+
+    if (left + FLOATING_INPUT_WIDTH >= window.innerWidth || left <= 0) {
+      if (left <= 0) {
+      } else {
+        left = window.innerWidth - FLOATING_INPUT_WIDTH;
+      }
+    }
+
+    if (top + FLOATING_INPUT_HEIGHT >= window.innerHeight || top <= 0) {
+      if (top <= 0) {
+      } else {
+        top = window.innerHeight - FLOATING_INPUT_HEIGHT * 2;
+      }
+    }
+
+    this.floatingInputDiv.style.top = top + 'px';
+    this.floatingInputDiv.style.left = left + 'px';
+    this.floatingInputDiv.style.display = 'flex';
+  }
+
+  /**
+   * Hides the floating priority menu
+   */
   hideFloater() {
     this.floatingInputDiv.style.display = 'none';
     this.newPriorityItem = undefined;
   }
 
+  /**
+   * Renames a priority, including its title and tooltip
+   */
   renamePriority() {
     if (!this.activePriority) {
       console.error('No active priority, cannot rename something that doesnt exist');
@@ -367,6 +389,9 @@ export class AppComponent implements OnInit, OnDestroy {
     this.hideFloater();
   }
 
+  /**
+   * Adds a new priority from the floating menu that appears on the canvas
+   */
   addListItemFromFloat() {
     const pos: Position = {
       x: parseInt(this.floatingInputDiv.style.left, 10),
@@ -377,6 +402,11 @@ export class AppComponent implements OnInit, OnDestroy {
     this.hideFloater();
   }
 
+  /**
+   * Adds a new priority from the left sidenav
+   * @param pos
+   * @returns
+   */
   addListItem(pos?: Position) {
     if (!this.newPriorityItem) {
       console.error('No priority entered');
@@ -400,6 +430,10 @@ export class AppComponent implements OnInit, OnDestroy {
     this.newResource = undefined;
   }
 
+  /**
+   * Draws a new priority item to the screen, including tooltip, and circle, as well as assign click events
+   * @param p
+   */
   addPriority(p: PriorityItem) {
     const elementNum = this.priorities.push(p);
     console.log(p);
@@ -465,6 +499,11 @@ export class AppComponent implements OnInit, OnDestroy {
     this.priorityLayer.draw();
   }
 
+  /**
+   * Returns the x and y position of the item based on the values entered in the input boxes in the left menu
+   * @param pos
+   * @returns The updated position
+   */
   private getPosOfNewItem(pos?: Position) {
     if (!pos) {
       pos = {
@@ -490,6 +529,10 @@ export class AppComponent implements OnInit, OnDestroy {
     return pos;
   }
 
+  /**
+   * Removes the list item at the given index
+   * @param i index of the item
+   */
   removeListItem(i: number) {
     const deletedProp = this.priorities[i];
     this.priorities.splice(i, 1);
@@ -512,16 +555,22 @@ export class AppComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Recalcuates the priorities after a dragend event has happened
+   * @param e The Konva event
+   */
   recalculatePriorities(e: KonvaEventObject<DragEvent>) {
     this.helper.priorityChildren.forEach((p) => {
+      console.log(p.id());
       console.log('Pos: ' + p.x() + ', ' + p.y());
     });
   }
 
-  handleKey(event: any) {
-    console.log(event);
-  }
-
+  /**
+   * Handles the hover of a list item in the sidenav
+   * @param id The drawn item id
+   * @param over whether the mouse is over the item or has left the item
+   */
   handleHover(id: string, over: boolean) {
     const group = this.helper.fetchDrawnItem(id);
 
@@ -538,10 +587,5 @@ export class AppComponent implements OnInit, OnDestroy {
         });
       }
     }
-  }
-
-  handleOptionSelect() {
-    console.log('Option selected');
-    this.priorityListElement.deselectAll();
   }
 }

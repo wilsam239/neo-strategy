@@ -1,6 +1,5 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSelectionList } from '@angular/material/list';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Group } from 'konva/lib/Group';
 import { Layer } from 'konva/lib/Layer';
@@ -50,20 +49,25 @@ class ImportantIds {
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit, OnDestroy {
+  /** this is the actual div used as the Konva stage */
   stageDiv!: HTMLElement;
+  /** This is the floating priority card that appears when clicking on the canvas */
   floatingInputDiv!: HTMLElement;
+  /** list of subscriptions, unsubscribed from in the ngOnDestroy */
   subs: Subscription[] = [];
   title = 'neo-strategy';
 
+  /** stores the actual priorities as they are created */
   priorities: PriorityItem[] = [];
 
+  /** Stores the priorities in a local copy of the Konva layer */
   priorityLayer!: Layer;
 
-  @ViewChild('priorityList')
-  priorityListElement!: MatSelectionList;
-
+  /** The title input for a new priority */
   newPriorityItem?: string;
+  /** the x axis input for a new priority */
   newPriority?: number;
+  /** the y axis input for a new priority */
   newResource?: number;
 
   helper!: KonvaHelper;
@@ -71,8 +75,14 @@ export class AppComponent implements OnInit, OnDestroy {
   xAxisLength = window.innerWidth * AXES_PERCENTAGE;
   yAxisHeight = window.innerHeight * AXES_PERCENTAGE;
 
+  /**
+   * Determines which rhs menu to open
+   */
   activeRhs!: 'help' | 'settings';
 
+  /** This is the priority that has been clicked on the screen
+   * set by the click event on the priority item group on canvas
+   */
   activePriority?: string;
 
   constructor(

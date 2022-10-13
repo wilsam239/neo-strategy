@@ -4,6 +4,7 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { MatSlider } from '@angular/material/slider';
 import { Group } from 'konva/lib/Group';
 import { Circle } from 'konva/lib/shapes/Circle';
+import { Label } from 'konva/lib/shapes/Label';
 import { Line } from 'konva/lib/shapes/Line';
 import { Text } from 'konva/lib/shapes/Text';
 import { Subscription, tap } from 'rxjs';
@@ -44,6 +45,8 @@ export class SettingsComponent implements OnInit {
   constrainSizeAndRadius = true;
   showMiddleAxes = false;
 
+  showTooltips = false;
+
   constructor(private themeService: ThemeService, public settings: SettingsService) {}
 
   ngOnInit(): void {
@@ -68,6 +71,7 @@ export class SettingsComponent implements OnInit {
     this.axisFontSlider.value = curAxisFontSize;
 
     this.showMiddleAxes = this.settings.showMidAxis.getValue();
+    this.showTooltips = this.settings.alwaysShowTooltips.getValue();
   }
 
   initSettingsSubscriptions() {
@@ -139,6 +143,23 @@ export class SettingsComponent implements OnInit {
           tap((size) => {
             const axisLabels = this.helper.fetchItemsOfType('Text') as Text[];
             axisLabels.forEach((label) => label.fontSize(size));
+          })
+        )
+        .subscribe(),
+
+      this.settings.alwaysShowTooltips
+        .pipe(
+          tap((val) => {
+            const groups = this.helper.fetchItemsOfType('Group') as Group[];
+            groups.forEach((group) => {
+              const [tooltip] = this.helper.fetchChildrenOfType(group, 'Label') as Label[];
+
+              if (val) {
+                tooltip.show();
+              } else {
+                tooltip.hide();
+              }
+            });
           })
         )
         .subscribe()

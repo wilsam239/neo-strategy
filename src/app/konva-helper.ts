@@ -3,10 +3,11 @@ import { Shape, ShapeConfig } from 'konva/lib/Shape';
 import { Label, Tag } from 'konva/lib/shapes/Label';
 import { Text } from 'konva/lib/shapes/Text';
 import { Stage } from 'konva/lib/Stage';
+import { SettingsService } from './settings.service';
 
 export class KonvaHelper {
   private drawnItems: { [key: string]: Shape | Group } = {};
-  constructor(private _stage: Stage) {}
+  constructor(private _stage: Stage, private settings: SettingsService) {}
 
   addToStage(child: any) {
     this.stage.add(child);
@@ -70,7 +71,11 @@ export class KonvaHelper {
 
   createTooltip(textString: string) {
     const tooltip = new Label({});
-    tooltip.hide();
+    if (this.settings.alwaysShowTooltips.getValue()) {
+      tooltip.show();
+    } else {
+      tooltip.hide();
+    }
 
     const tooltipTag = new Tag({
       fill: 'black',

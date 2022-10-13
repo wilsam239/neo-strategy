@@ -16,6 +16,7 @@ export class SettingsService {
   readonly circleFontSize = new BehaviorSubject(25);
   readonly axisLabelFontSize = new BehaviorSubject(25);
   readonly showMidAxis = new BehaviorSubject(true);
+  readonly alwaysShowTooltips = new BehaviorSubject(true);
 
   constructor() {}
 }

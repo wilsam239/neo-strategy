@@ -6,6 +6,7 @@ import { Group } from 'konva/lib/Group';
 import { Layer } from 'konva/lib/Layer';
 import { KonvaEventObject } from 'konva/lib/Node';
 import { Circle } from 'konva/lib/shapes/Circle';
+import { Label } from 'konva/lib/shapes/Label';
 import { Line } from 'konva/lib/shapes/Line';
 import { Text } from 'konva/lib/shapes/Text';
 import { Stage } from 'konva/lib/Stage';
@@ -73,6 +74,8 @@ export class AppComponent implements OnInit, OnDestroy {
   yAxisHeight = window.innerHeight * AXES_PERCENTAGE;
 
   activeRhs!: 'help' | 'settings';
+
+  activePriority?: string;
 
   constructor(
     private dialog: MatDialog,
@@ -168,7 +171,7 @@ export class AppComponent implements OnInit, OnDestroy {
     const floatingInputDiv = document.getElementById('priority-input-box');
     if (floatingInputDiv !== null) this.floatingInputDiv = floatingInputDiv;
 
-    this.helper = new KonvaHelper(stage);
+    this.helper = new KonvaHelper(stage, this.settings);
 
     this.priorityLayer = new Layer();
 
@@ -183,32 +186,36 @@ export class AppComponent implements OnInit, OnDestroy {
       if (!e.target.hasChildren()) {
         return;
       }
-      const mouseX = e.evt.clientX;
-      const mouseY = e.evt.clientY;
 
-      let top = mouseY - FLOATING_INPUT_HEIGHT / 2;
-      let left = mouseX;
-
-      if (left + FLOATING_INPUT_WIDTH >= window.innerWidth || left <= 0) {
-        if (left <= 0) {
-        } else {
-          left = window.innerWidth - FLOATING_INPUT_WIDTH;
-        }
-      }
-
-      if (top + FLOATING_INPUT_HEIGHT >= window.innerHeight || top <= 0) {
-        if (top <= 0) {
-        } else {
-          top = window.innerHeight - FLOATING_INPUT_HEIGHT * 2;
-        }
-      }
-
-      this.floatingInputDiv.style.top = top + 'px';
-      this.floatingInputDiv.style.left = left + 'px';
-      this.floatingInputDiv.style.display = 'flex';
+      this.showInfoCard(e);
     });
   }
 
+  private showInfoCard(e: KonvaEventObject<MouseEvent>) {
+    const mouseX = e.evt.clientX;
+    const mouseY = e.evt.clientY;
+
+    let top = mouseY - FLOATING_INPUT_HEIGHT / 2;
+    let left = mouseX;
+
+    if (left + FLOATING_INPUT_WIDTH >= window.innerWidth || left <= 0) {
+      if (left <= 0) {
+      } else {
+        left = window.innerWidth - FLOATING_INPUT_WIDTH;
+      }
+    }
+
+    if (top + FLOATING_INPUT_HEIGHT >= window.innerHeight || top <= 0) {
+      if (top <= 0) {
+      } else {
+        top = window.innerHeight - FLOATING_INPUT_HEIGHT * 2;
+      }
+    }
+
+    this.floatingInputDiv.style.top = top + 'px';
+    this.floatingInputDiv.style.left = left + 'px';
+    this.floatingInputDiv.style.display = 'flex';
+  }
   private fetchFromLocalStorage() {
     const found = window.localStorage.getItem(LOCAL_STORAGE_KEYS.PRIORITIES);
 
@@ -335,11 +342,29 @@ export class AppComponent implements OnInit, OnDestroy {
     this.helper.addDrawnItem(xMid, yMid);
     this.helper.addTo(midAxesLayer, xMid, yMid);
     this.helper.addToStage(midAxesLayer);
+    midAxesLayer.moveToBottom();
   }
 
   hideFloater() {
     this.floatingInputDiv.style.display = 'none';
     this.newPriorityItem = undefined;
+  }
+
+  renamePriority() {
+    if (!this.activePriority) {
+      console.error('No active priority, cannot rename something that doesnt exist');
+      return;
+    }
+    const activeP = this.priorities.find((p) => p.id === this.activePriority);
+
+    if (activeP && this.newPriorityItem) {
+      activeP.title = this.newPriorityItem;
+      const drawn = this.helper.fetchDrawnItem(this.activePriority) as Group;
+      const [tooltip] = this.helper.fetchChildrenOfType(drawn, 'Label') as Label[];
+      const tooltipText = tooltip.getChildren().filter((c) => c.className === 'Text');
+      tooltipText.forEach((t) => (t as Text).text(this.newPriorityItem!));
+    }
+    this.hideFloater();
   }
 
   addListItemFromFloat() {
@@ -421,6 +446,15 @@ export class AppComponent implements OnInit, OnDestroy {
     this.helper.addTo(priorityGroup, priorityLabel);
     this.helper.addTo(priorityGroup, tooltip);
 
+    priorityGroup.on('click', (e) => {
+      this.activePriority = priorityGroup.id();
+      this.newPriorityItem = p.title;
+      this.showInfoCard(e);
+    });
+
+    priorityGroup.on('dragstart', (e) => {
+      priorityGroup.moveToTop();
+    });
     priorityGroup.on('dragend', (e) => {
       this.recalculatePriorities(e);
     });
@@ -497,9 +531,9 @@ export class AppComponent implements OnInit, OnDestroy {
       if (circles.length > 0) {
         circles.forEach((circle) => {
           if (over) {
-            circle.fill('green');
+            circle.fill(this.themeService.activeTheme.getValue().headingColor);
           } else {
-            circle.fill('white');
+            circle.fill(this.themeService.activeTheme.getValue().buttonColor);
           }
         });
       }
@@ -510,6 +544,4 @@ export class AppComponent implements OnInit, OnDestroy {
     console.log('Option selected');
     this.priorityListElement.deselectAll();
   }
-
-  showInfoCard() {}
 }

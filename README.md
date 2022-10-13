@@ -15,10 +15,14 @@ Neo Strategy is a tool to create an action priority matrix of tasks.
 - [ ] Dynamic resizing
 - [ ] Keep a dynamic list of priorities based on quarters
 - [x] Axis labels
+- [x] Make most recently selected priority be first on the layer (overlapping everything else)
+- [x] Move mid axes layer to back of canvas
+- [ ] easter egg for earthquake mode where everything shakes
 - [x] Customisable canvas options
   - [x] Radius
   - [x] Standard fill colour (done by theme)
   - [x] Hover fill colour (done by theme)
+  - [x] Tooltips always on
   - [ ] Tooltip Background colour
   - [ ] Tooltip text colour
   - [ ] Axis Orientation

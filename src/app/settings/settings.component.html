@@ -39,6 +39,13 @@
             (valueChange)="updateCircleFontSize($event)">
           </mat-slider>
         </p>
+        <h3>Tooltips</h3>
+        <mat-slide-toggle
+          [(ngModel)]="showTooltips"
+          (ngModelChange)="settings.alwaysShowTooltips.next($event)"
+          color="accent"
+          >Always show tooltips
+        </mat-slide-toggle>
       </mat-expansion-panel>
       <mat-expansion-panel>
         <mat-expansion-panel-header>

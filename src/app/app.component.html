@@ -91,8 +91,11 @@
         </div>
         <mat-card id="priority-input-box-outer">
           <mat-form-field appearance="outline" fxFill>
-            <mat-label>{{activePriority ? 'Rename Priority' : 'New Priority'}}</mat-label>
-            <input matInput [(ngModel)]="newPriorityItem" (keyup.enter)="activePriority ? renamePriority() : addListItemFromFloat()" />
+            <mat-label>{{ activePriority ? 'Rename Priority' : 'New Priority' }}</mat-label>
+            <input
+              matInput
+              [(ngModel)]="newPriorityItem"
+              (keyup.enter)="activePriority ? renamePriority() : addListItemFromFloat()" />
           </mat-form-field>
         </mat-card>
       </div>
@@ -121,7 +124,7 @@
 </div>
 
 <ng-template #helpSectionAccordion>
-  <mat-accordion>
+  <mat-accordion displayMode="flat">
     <mat-expansion-panel>
       <mat-expansion-panel-header>
         <mat-panel-title><mat-icon>info</mat-icon> General Info</mat-panel-title>

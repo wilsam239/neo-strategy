@@ -83,6 +83,11 @@ export class SettingsComponent implements OnInit {
             groups.forEach((group) => {
               const circles = this.helper.fetchChildrenOfType(group, 'Circle') as Circle[];
               circles.forEach((circle) => circle.radius(radius));
+              const [tooltip] = this.helper.fetchChildrenOfType(group, 'Label') as Label[];
+              const [tooltipTag] = tooltip.getChildren().filter((c) => c.className === 'Tag');
+              tooltipTag.offsetY(radius);
+              const [tooltipText] = tooltip.getChildren().filter((c) => c.className === 'Text');
+              tooltipText.offsetY(radius);
               const labels = this.helper.fetchChildrenOfType(group, 'Text') as Text[];
               labels.forEach((l) => {
                 l.width(radius);

@@ -438,7 +438,7 @@ export class AppComponent implements OnInit, OnDestroy {
     });
     priorityGroup.on('mouseout', () => {
       this.stageDiv!.classList.remove('pointer');
-      tooltip.hide();
+      if (!this.settings.alwaysShowTooltips.getValue()) tooltip.hide();
       newCircle.fill(this.themeService.activeTheme.getValue().buttonColor);
     });
 

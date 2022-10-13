@@ -88,6 +88,7 @@ export class KonvaHelper {
       shadowOffsetX: 10,
       shadowOffsetY: 10,
       shadowOpacity: 0.5,
+      offsetY: this.settings.circleRadius.getValue(),
     });
 
     const tooltipText = new Text({
@@ -96,6 +97,7 @@ export class KonvaHelper {
       fontSize: 18,
       padding: 5,
       fill: 'white',
+      offsetY: this.settings.circleRadius.getValue(),
     });
 
     this.addTo(tooltip, tooltipTag, tooltipText);

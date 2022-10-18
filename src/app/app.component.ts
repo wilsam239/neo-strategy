@@ -14,6 +14,15 @@ import { KonvaHelper } from './konva-helper';
 import { SettingsService } from './settings.service';
 import { ThemeService } from './theme.service';
 
+class QuantileKeys {
+  static BOTTOM_RIGHT = 'br';
+  static BOTTOM_LEFT = 'bl';
+  static TOP_RIGHT = 'tr';
+  static TOP_LEFT = 'tl';
+}
+
+const QUANTILE_ORDER = ['br', 'tr', 'bl', 'tl'];
+
 const FLOATING_INPUT_WIDTH = 250;
 const FLOATING_INPUT_HEIGHT = 80;
 
@@ -60,6 +69,9 @@ export class AppComponent implements OnInit, OnDestroy {
   /** stores the actual priorities as they are created */
   priorities: PriorityItem[] = [];
 
+  /** stores the order of the priorities  after moving them*/
+  prioritiesOrder: PriorityItem[] = [];
+
   /** Stores the priorities in a local copy of the Konva layer */
   priorityLayer!: Layer;
 
@@ -78,12 +90,18 @@ export class AppComponent implements OnInit, OnDestroy {
   /**
    * Determines which rhs menu to open
    */
-  activeRhs!: 'help' | 'settings';
+  activeRhs!: 'help' | 'settings' | 'order';
 
   /** This is the priority that has been clicked on the screen
    * set by the click event on the priority item group on canvas
    */
   activePriority?: string;
+
+  titles = {
+    help: 'Neo Strategy Help',
+    settings: 'Canvas Settings',
+    order: 'Priority Order',
+  };
 
   constructor(
     private dialog: MatDialog,
@@ -149,6 +167,7 @@ export class AppComponent implements OnInit, OnDestroy {
       const priorities: PriorityItem[] = JSON.parse(found);
       console.log('make ' + priorities.length + ' priorities');
       priorities.forEach((p) => this.addPriority(p));
+      this.recalculatePriorities();
     }
   }
 
@@ -500,7 +519,7 @@ export class AppComponent implements OnInit, OnDestroy {
       priorityGroup.moveToTop();
     });
     priorityGroup.on('dragend', (e) => {
-      this.recalculatePriorities(e);
+      this.recalculatePriorities();
     });
 
     this.helper.addDrawnItem(priorityGroup);
@@ -566,14 +585,51 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Recalcuates the priorities after a dragend event has happened
-   * @param e The Konva event
+   * Recalcuates the priorities after a dragend event has happened or on fetch from local storage
    */
-  recalculatePriorities(e: KonvaEventObject<DragEvent>) {
+  recalculatePriorities() {
+    const order: { [key: string]: PriorityItem[] } = {};
+
+    QUANTILE_ORDER.forEach((k) => (order[k] = []));
+
     this.helper.priorityChildren.forEach((p) => {
-      console.log(p.id());
-      console.log('Pos: ' + p.x() + ', ' + p.y());
+      const _p = this.priorities.find((pi) => pi.id === p.id());
+      if (!_p) {
+        console.error('No Priority found with id: ' + p.id());
+        return;
+      }
+      // if (p.id() === e.target.id()) {
+      // console.log('Pos: ' + p.x() + ', ' + p.y());
+      if (p.x() <= this.helper.stage.width() / 2) {
+        // left side of screen
+        if (p.y() <= this.helper.stage.height() / 2) {
+          order[QuantileKeys.TOP_LEFT].push(_p);
+        } else {
+          order[QuantileKeys.BOTTOM_LEFT].push(_p);
+        }
+      } else {
+        // right side of screen
+        if (p.y() <= this.helper.stage.height() / 2) {
+          order[QuantileKeys.TOP_RIGHT].push(_p);
+        } else {
+          order[QuantileKeys.BOTTOM_RIGHT].push(_p);
+        }
+      }
+      // }
     });
+
+    this.prioritiesOrder = QUANTILE_ORDER.map((k) => {
+      return order[k].sort((a, b) => {
+        const drawnA = this.helper.fetchDrawnItem(a.id);
+        const drawnB = this.helper.fetchDrawnItem(b.id);
+        if (drawnA.x() === drawnB.x()) {
+          return drawnA.y() < drawnB.y() ? 0 : 1;
+        }
+        return drawnA.x() > drawnB.x() ? 0 : 1;
+      });
+    }).flat();
+
+    console.log(this.prioritiesOrder);
   }
 
   /**
@@ -597,5 +653,37 @@ export class AppComponent implements OnInit, OnDestroy {
         });
       }
     }
+  }
+
+  showPriorityList() {
+    // const orderedLayer = new Layer({ id: 'ordered-layer', exclude: true });
+    // const rect = new Rect({
+    //   x: this.xAxisLength,
+    //   y: 0,
+    //   width: 100,
+    //   height: this.yAxisHeight,
+    //   fill: 'white',
+    //   opacity: 0.5,
+    //   id: 'ordered-rect',
+    //   exclude: true,
+    // });
+    // const text = new Text({
+    //   x: this.xAxisLength,
+    //   y: this.yAxisHeight,
+    //   text: this.prioritiesOrder
+    //     .map((p, i) => {
+    //       return `${i + 1} - ${p.title}`;
+    //     })
+    //     .join('\n'),
+    //   fontSize: 12,
+    //   fontFamily: 'Calibri',
+    //   width: 100,
+    //   padding: 20,
+    //   align: 'left',
+    // });
+    // this.helper.addDrawnItem(rect, text);
+    // this.helper.addTo(orderedLayer, rect, text);
+    // this.helper.addToStage(orderedLayer);
+    // console.log(orderedLayer);
   }
 }

@@ -2,6 +2,8 @@
 
 Neo Strategy is a tool to create an action priority matrix of tasks.
 
+It is called NeoStrategy because we often created an action priority matrix at strategy meetings - (the strategy part). And I prefixed with "Neo", because matrix. 🤓
+
 ## Todo
 
 - [x] Theming
@@ -13,7 +15,7 @@ Neo Strategy is a tool to create an action priority matrix of tasks.
 - [ ] Add a screenshot tool to export the as a PNG/PDF that shows the left sidenav and all the priorities
 - [ ] Edit/delete priority when clicking on it on the canvas
 - [ ] Dynamic resizing
-- [ ] Keep a dynamic list of priorities based on quarters
+- [x] Keep a dynamic list of priorities based on quarters
 - [x] Axis labels
 - [x] Make most recently selected priority be first on the layer (overlapping everything else)
 - [x] Move mid axes layer to back of canvas

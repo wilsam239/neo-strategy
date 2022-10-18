@@ -1,77 +1,57 @@
-<div fxLayout fxLayoutAlign="start center">
-  <button mat-icon-button (click)="menu.toggle()" matTooltip="Close Settings Menu">
-    <mat-icon aria-label="label">close</mat-icon>
-  </button>
-  <h1>Canvas Settings</h1>
-</div>
-<mat-divider></mat-divider>
-<div class="rhs-sidenav-list" fxLayout="column">
-  <div id="settings-section">
-    <mat-accordion displayMode="flat">
-      <mat-expansion-panel>
-        <mat-expansion-panel-header>
-          <mat-panel-title><mat-icon>palette</mat-icon> Theme</mat-panel-title>
-        </mat-expansion-panel-header>
-        <ng-container *ngTemplateOutlet="themesSection"></ng-container>
-      </mat-expansion-panel>
-      <mat-expansion-panel>
-        <mat-expansion-panel-header>
-          <mat-panel-title><mat-icon>info</mat-icon> Priority Item Settings</mat-panel-title>
-        </mat-expansion-panel-header>
+<mat-accordion displayMode="flat">
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title><mat-icon>palette</mat-icon> Theme</mat-panel-title>
+    </mat-expansion-panel-header>
+    <ng-container *ngTemplateOutlet="themesSection"></ng-container>
+  </mat-expansion-panel>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title><mat-icon>info</mat-icon> Priority Item Settings</mat-panel-title>
+    </mat-expansion-panel-header>
 
-        <mat-slide-toggle [(ngModel)]="constrainSizeAndRadius" color="accent"
-          >Constrain Font and Radius value
-        </mat-slide-toggle>
+    <mat-slide-toggle [(ngModel)]="constrainSizeAndRadius" color="accent"
+      >Constrain Font and Radius value
+    </mat-slide-toggle>
 
-        <h3>Circle Radius</h3>
-        <p>
-          <mat-slider #radiusSlider fxFill max="100" min="5" thumbLabel="true" (valueChange)="updateRadius($event)">
-          </mat-slider>
-        </p>
-        <h3>Label Font Size</h3>
-        <p>
-          <mat-slider
-            #circleFontSlider
-            fxFill
-            max="100"
-            min="5"
-            thumbLabel="true"
-            (valueChange)="updateCircleFontSize($event)">
-          </mat-slider>
-        </p>
-        <h3>Tooltips</h3>
-        <mat-slide-toggle
-          [(ngModel)]="showTooltips"
-          (ngModelChange)="settings.alwaysShowTooltips.next($event)"
-          color="accent"
-          >Always show tooltips
-        </mat-slide-toggle>
-      </mat-expansion-panel>
-      <mat-expansion-panel>
-        <mat-expansion-panel-header>
-          <mat-panel-title><mat-icon>info</mat-icon> Axis Settings</mat-panel-title>
-        </mat-expansion-panel-header>
-        <mat-slide-toggle
-          [(ngModel)]="showMiddleAxes"
-          (ngModelChange)="settings.showMidAxis.next($event)"
-          color="accent"
-          >Show Middle Axes
-        </mat-slide-toggle>
-        <h3>Label Font Size</h3>
-        <p>
-          <mat-slider
-            #axisFontSlider
-            fxFill
-            max="100"
-            min="5"
-            thumbLabel="true"
-            (valueChange)="updateAxisFontSize($event)">
-          </mat-slider>
-        </p>
-      </mat-expansion-panel>
-    </mat-accordion>
-  </div>
-</div>
+    <h3>Circle Radius</h3>
+    <p>
+      <mat-slider #radiusSlider fxFill max="100" min="5" thumbLabel="true" (valueChange)="updateRadius($event)">
+      </mat-slider>
+    </p>
+    <h3>Label Font Size</h3>
+    <p>
+      <mat-slider
+        #circleFontSlider
+        fxFill
+        max="100"
+        min="5"
+        thumbLabel="true"
+        (valueChange)="updateCircleFontSize($event)">
+      </mat-slider>
+    </p>
+    <h3>Tooltips</h3>
+    <mat-slide-toggle
+      [(ngModel)]="showTooltips"
+      (ngModelChange)="settings.alwaysShowTooltips.next($event)"
+      color="accent"
+      >Always show tooltips
+    </mat-slide-toggle>
+  </mat-expansion-panel>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title><mat-icon>info</mat-icon> Axis Settings</mat-panel-title>
+    </mat-expansion-panel-header>
+    <mat-slide-toggle [(ngModel)]="showMiddleAxes" (ngModelChange)="settings.showMidAxis.next($event)" color="accent"
+      >Show Middle Axes
+    </mat-slide-toggle>
+    <h3>Label Font Size</h3>
+    <p>
+      <mat-slider #axisFontSlider fxFill max="100" min="5" thumbLabel="true" (valueChange)="updateAxisFontSize($event)">
+      </mat-slider>
+    </p>
+  </mat-expansion-panel>
+</mat-accordion>
 
 <ng-template #themesSection>
   <mat-selection-list #themeList [multiple]="false" (selectionChange)="themeChangeHandler($event)">

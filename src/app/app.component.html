@@ -52,12 +52,16 @@
       </mat-card>
 
       <div fxLayout="row" id="rhs-actions" fxLayoutGap="1em">
-        <button mat-fab (click)="activeRhs = 'help'; rhs.toggle()" id="help-toggle" matTooltip="Open Help Menu">
-          <mat-icon aria-label="label">help</mat-icon>
-        </button>
-
         <button mat-fab (click)="saveToLocalStorage()" id="save-button" matTooltip="Save Priorities">
           <mat-icon aria-label="label">save</mat-icon>
+        </button>
+
+        <button
+          mat-fab
+          (click)="activeRhs = 'order'; rhs.toggle()"
+          id="show-order-button"
+          matTooltip="Show Priorities Order">
+          <mat-icon aria-label="label">format_list_numbered_rtl</mat-icon>
         </button>
 
         <button
@@ -66,6 +70,10 @@
           id="settings-toggle"
           matTooltip="Open Settings Menu">
           <mat-icon aria-label="label">settings</mat-icon>
+        </button>
+
+        <button mat-fab (click)="activeRhs = 'help'; rhs.toggle()" id="help-toggle" matTooltip="Open Help Menu">
+          <mat-icon aria-label="label">help</mat-icon>
         </button>
       </div>
 
@@ -101,24 +109,32 @@
       </div>
     </mat-sidenav-content>
 
-    <mat-sidenav id="rhs-sidenav" #rhs mode="over" [opened]="false" class="sidenav" position="end">
-      <ng-container *ngIf="activeRhs == 'settings'">
-        <app-settings [helper]="helper" [menu]="rhs"> </app-settings>
-      </ng-container>
-      <ng-container *ngIf="activeRhs == 'help'">
-        <div fxLayout fxLayoutAlign="start center">
-          <button mat-icon-button (click)="rhs.toggle()" matTooltip="Close Help Menu">
-            <mat-icon aria-label="label">close</mat-icon>
-          </button>
-          <h1>Neo Strategy Help</h1>
-        </div>
-        <mat-divider></mat-divider>
-        <div class="rhs-sidenav-list" fxLayout="column">
-          <div id="help-section">
+    <mat-sidenav id="rhs-sidenav" #rhs [mode]="'over'" [opened]="false" class="sidenav" position="end">
+      <div fxLayout fxLayoutAlign="start center">
+        <button mat-icon-button (click)="rhs.toggle()" matTooltip="Close {{ activeRhs | titlecase }} Menu">
+          <mat-icon aria-label="label">close</mat-icon>
+        </button>
+        <h1>{{ titles[activeRhs] }}</h1>
+      </div>
+      <mat-divider></mat-divider>
+
+      <div class="rhs-sidenav-list" fxLayout="column">
+        <div id="{{ activeRhs }}-section">
+          <ng-container *ngIf="activeRhs == 'settings'">
+            <app-settings [helper]="helper" [menu]="rhs"> </app-settings>
+          </ng-container>
+          <ng-container *ngIf="activeRhs == 'help'">
             <ng-container *ngTemplateOutlet="helpSectionAccordion"></ng-container>
-          </div>
+          </ng-container>
+          <ng-container *ngIf="activeRhs == 'order'">
+            <mat-list role="list">
+              <mat-list-item role="listitem" *ngFor="let priority of prioritiesOrder; let i = index">
+                {{ i + 1 }}. {{ priority.title }}
+              </mat-list-item>
+            </mat-list>
+          </ng-container>
         </div>
-      </ng-container>
+      </div>
     </mat-sidenav>
   </mat-sidenav-container>
 </div>

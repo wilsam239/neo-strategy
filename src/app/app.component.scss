@@ -24,12 +24,19 @@ mat-sidenav-container {
   margin: 1em;
 }
 
-#rhs-actions {
+.rhs-actions {
   position: fixed;
-  top: 0;
   right: 0;
   z-index: 1;
   margin: 1em;
+}
+
+#rhs-actions-top {
+  top: 0;
+}
+
+#rhs-actions-bottom {
+  bottom: 0;
 }
 
 // #save-button {

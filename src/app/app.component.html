@@ -51,7 +51,7 @@
         <div id="matrix"></div>
       </mat-card>
 
-      <div fxLayout="row" id="rhs-actions" fxLayoutGap="1em">
+      <div fxLayout="row" class="rhs-actions" id="rhs-actions-top" fxLayoutGap="1em">
         <button mat-fab (click)="saveToLocalStorage()" id="save-button" matTooltip="Save Priorities">
           <mat-icon aria-label="label">save</mat-icon>
         </button>
@@ -75,6 +75,13 @@
         <button mat-fab (click)="activeRhs = 'help'; rhs.toggle()" id="help-toggle" matTooltip="Open Help Menu">
           <mat-icon aria-label="label">help</mat-icon>
         </button>
+      </div>
+      <div fxLayout="row" class="rhs-actions" id="rhs-actions-bottom" fxLayoutGap="1em">
+        <mat-fab-menu
+          color="accent"
+          [fabButtons]="exportMenu"
+          (onFabMenuItemSelected)="handleFabMenuSelection($event)"
+          [icon]="'download'"></mat-fab-menu>
       </div>
 
       <div id="priority-input-box" fxLayout="column">

@@ -1,6 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { MatFabMenu } from '@angular-material-extensions/fab-menu';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSidenav } from '@angular/material/sidenav';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import html2canvas from 'html2canvas';
 import { Group } from 'konva/lib/Group';
 import { Layer } from 'konva/lib/Layer';
 import { KonvaEventObject } from 'konva/lib/Node';
@@ -9,7 +12,21 @@ import { Label } from 'konva/lib/shapes/Label';
 import { Line } from 'konva/lib/shapes/Line';
 import { Text } from 'konva/lib/shapes/Text';
 import { Stage } from 'konva/lib/Stage';
-import { debounceTime, fromEvent, interval, Subscription, tap } from 'rxjs';
+
+import {
+  catchError,
+  debounceTime,
+  from,
+  fromEvent,
+  interval,
+  map,
+  mergeMap,
+  of,
+  Subscription,
+  take,
+  tap,
+  throwError,
+} from 'rxjs';
 import { KonvaHelper } from './konva-helper';
 import { SettingsService } from './settings.service';
 import { ThemeService } from './theme.service';
@@ -102,6 +119,14 @@ export class AppComponent implements OnInit, OnDestroy {
     settings: 'Canvas Settings',
     order: 'Priority Order',
   };
+
+  exportMenu: MatFabMenu[] = [
+    { id: 1, icon: 'add_a_photo', color: 'primary', tooltip: 'Save as PNG', tooltipPosition: 'left' },
+    { id: 2, icon: 'picture_as_pdf', color: 'primary', tooltip: 'Save as PDF', tooltipPosition: 'left' },
+  ];
+
+  @ViewChild('rhs')
+  rightNav!: MatSidenav;
 
   constructor(
     private dialog: MatDialog,
@@ -699,5 +724,72 @@ export class AppComponent implements OnInit, OnDestroy {
     // this.helper.addTo(orderedLayer, rect, text);
     // this.helper.addToStage(orderedLayer);
     // console.log(orderedLayer);
+  }
+
+  handleFabMenuSelection(e: any) {
+    console.log(e);
+    switch (e) {
+      case 1: {
+        // png
+        this.captureImage();
+        return;
+      }
+
+      case 2: {
+        //pdf
+        return;
+      }
+
+      default: {
+        // unsupported
+      }
+    }
+  }
+
+  captureImage() {
+    const canvas = document.getElementById('canvas-container');
+
+    if (canvas) {
+      from(html2canvas(canvas))
+        .pipe(
+          tap(() => {
+            this.activeRhs = 'order';
+            this.rightNav.toggle();
+          }),
+          mergeMap((img) => {
+            return this.rightNav._animationEnd.pipe(
+              take(1),
+              mergeMap(() => {
+                const list = document.getElementById('rhs-sidenav');
+                if (list) {
+                  return from(html2canvas(list)).pipe(
+                    map((listImg) => {
+                      return [img, listImg];
+                    }),
+                    tap(() => {
+                      this.rightNav.toggle();
+                    })
+                  );
+                }
+                return throwError(() => {
+                  return 'No rhs-sidenav element found.';
+                });
+              })
+            );
+          }),
+          mergeMap((imgs) => {
+            return this.mergeImages(imgs.map((img) => img.toDataURL())).pipe(tap((img) => console.log(img)));
+          }),
+          catchError((err) => {
+            console.error(err);
+            return of(err);
+          })
+        )
+        .subscribe();
+    }
+  }
+
+  mergeImages(imgs: string[]) {
+    return of(null);
   }
 }

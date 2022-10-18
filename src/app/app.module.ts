@@ -4,6 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppComponent } from './app.component';
 
+import { MatFabMenuModule } from '@angular-material-extensions/fab-menu';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -45,7 +46,7 @@ const MATERIAL_LIBS = [
 
 @NgModule({
   declarations: [AppComponent, SettingsComponent],
-  imports: [BrowserModule, BrowserAnimationsModule, FlexLayoutModule, FormsModule, ...MATERIAL_LIBS],
+  imports: [BrowserModule, BrowserAnimationsModule, FlexLayoutModule, FormsModule, ...MATERIAL_LIBS, MatFabMenuModule],
   providers: [ThemeService, StyleManagerService],
   bootstrap: [AppComponent],
 })

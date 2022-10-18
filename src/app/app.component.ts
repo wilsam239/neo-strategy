@@ -16,12 +16,14 @@ import { Stage } from 'konva/lib/Stage';
 import {
   catchError,
   debounceTime,
+  filter,
   from,
   fromEvent,
   interval,
   map,
   mergeMap,
   of,
+  Subject,
   Subscription,
   take,
   tap,
@@ -176,6 +178,8 @@ export class AppComponent implements OnInit, OnDestroy {
         )
         .subscribe()
     );
+
+    this.mergeImages([]).subscribe();
   }
 
   ngOnDestroy() {
@@ -790,6 +794,85 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   mergeImages(imgs: string[]) {
-    return of(null);
+    let numLoaded = 0;
+    const subject = new Subject();
+
+    // imgs = ['https://via.placeholder.com/100x100/FFFFaa', 'https://via.placeholder.com/100x100/ccccFF'];
+    var c = document.getElementById('result-canvas') as HTMLCanvasElement;
+
+    if (!c) {
+      return throwError(() => 'No result-canvas');
+    }
+
+    var ctx = c.getContext('2d');
+
+    if (ctx === null) {
+      return throwError(() => 'No ctx');
+    }
+
+    let imgObjs: HTMLImageElement[] = [];
+    imgs.forEach((img, i, list) => {
+      let imgObj = new Image();
+
+      imgObj.src = img;
+      imgObjs.push(imgObj);
+
+      imgObj.onload = () => {
+        if (i > 0) {
+          ctx!.drawImage(imgObj, imgObjs[i - 1].width, 0);
+        } else {
+          ctx!.drawImage(imgObj, 0, 0);
+        }
+        subject.next(true);
+      };
+    });
+
+    return subject.pipe(
+      tap(() => {
+        numLoaded = numLoaded + 1;
+      }),
+      filter(() => numLoaded === imgs.length),
+      mergeMap(() => {
+        c.width = imgObjs.reduce((a, b) => a + b.width, 0);
+        c.height = Math.max(...imgObjs.map((img) => img.height));
+        return from(html2canvas(c)).pipe(
+          tap((img) => {
+            const uri = img.toDataURL();
+            const filename = `Prioritiy Matrix ${new Date().toDateString()}.png`;
+            var link = document.createElement('a');
+
+            if (typeof link.download === 'string') {
+              link.href = uri;
+              link.download = filename;
+
+              //Firefox requires the link to be in the body
+              // document.body.appendChild(link);
+
+              //simulate click
+              link.click();
+
+              //remove the link when done
+              document.body.removeChild(link);
+            } else {
+              window.open(uri);
+            }
+          })
+        );
+      })
+      /*tap(() => {
+        console.log('finished');
+        var img = c.toDataURL('image/png');
+
+        const width = imgObjs.reduce((a, b) => a + b.width, 0);
+        const height = Math.max(...imgObjs.map((img) => img.height));
+        document.write(`<img id="joinedImage" src="${img}" width="${width}" height="${height}"/>`);
+        // const finalImageObj = new Image();
+        // finalImageObj.src = img;
+        // finalImageObj.width = imgObjs.reduce((a, b) => a + b.width, 0);
+        // finalImageObj.height = Math.max(...imgObjs.map((img) => img.height));
+
+        // document.appendChild(finalImageObj);
+      })*/
+    );
   }
 }

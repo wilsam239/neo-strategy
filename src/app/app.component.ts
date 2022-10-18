@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSidenav } from '@angular/material/sidenav';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 import { Group } from 'konva/lib/Group';
 import { Layer } from 'konva/lib/Layer';
 import { KonvaEventObject } from 'konva/lib/Node';
@@ -690,12 +691,13 @@ export class AppComponent implements OnInit, OnDestroy {
     switch (e) {
       case 1: {
         // png
-        this.captureImage();
+        this.captureImage('png');
         return;
       }
 
       case 2: {
         //pdf
+        this.captureImage('pdf');
         return;
       }
 
@@ -705,11 +707,11 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
-  captureImage() {
+  captureImage(filetype: 'png' | 'pdf') {
     const canvas = document.getElementById('canvas-container');
 
     if (canvas) {
-      from(html2canvas(canvas, { allowTaint: true }))
+      from(html2canvas(canvas, { allowTaint: true, logging: false }))
         .pipe(
           tap(() => {
             this.activeRhs = 'order';
@@ -721,7 +723,7 @@ export class AppComponent implements OnInit, OnDestroy {
               mergeMap(() => {
                 const list = document.getElementById('rhs-sidenav');
                 if (list) {
-                  return from(html2canvas(list)).pipe(
+                  return from(html2canvas(list, { logging: false })).pipe(
                     map((listImg) => {
                       return [img, listImg];
                     }),
@@ -737,7 +739,10 @@ export class AppComponent implements OnInit, OnDestroy {
             );
           }),
           mergeMap((imgs) => {
-            return this.mergeImages(imgs.map((img) => img.toDataURL()));
+            return this.mergeImages(
+              imgs.map((img) => img.toDataURL()),
+              filetype
+            );
           }),
           catchError((err) => {
             console.error(err);
@@ -748,7 +753,7 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
-  mergeImages(imgs: string[]) {
+  mergeImages(imgs: string[], filetype: 'png' | 'pdf') {
     let numLoaded = 0;
     const subject = new Subject();
 
@@ -796,23 +801,40 @@ export class AppComponent implements OnInit, OnDestroy {
           tap((img) => {
             document.body.appendChild(img);
             const uri = img.toDataURL();
-            const filename = `Prioritiy Matrix ${new Date().toDateString()}.png`;
-            var link = document.createElement('a');
+            const filename = `Prioritiy Matrix ${new Date().toDateString()}.${filetype}`;
 
-            if (typeof link.download === 'string') {
-              link.href = uri;
-              link.download = filename;
+            if (filetype === 'png') {
+              var link = document.createElement('a');
 
-              //Firefox requires the link to be in the body
-              document.body.appendChild(link);
+              if (typeof link.download === 'string') {
+                link.href = uri;
+                link.download = filename;
 
-              //simulate click
-              link.click();
+                //Firefox requires the link to be in the body
+                document.body.appendChild(link);
 
-              //remove the link when done
-              document.body.removeChild(link);
+                //simulate click
+                link.click();
+
+                //remove the link when done
+                document.body.removeChild(link);
+              } else {
+                window.open(uri);
+              }
             } else {
-              window.open(uri);
+              let pdf = new jsPDF('l', 'px', [
+                imgObjs.reduce((a, b) => a + b.width, 0),
+                Math.max(...imgObjs.map((img) => img.height)),
+              ]);
+              pdf.addImage(
+                uri,
+                'PNG',
+                0,
+                0,
+                imgObjs.reduce((a, b) => a + b.width, 0),
+                Math.max(...imgObjs.map((img) => img.height))
+              );
+              pdf.save(filename);
             }
 
             document.body.removeChild(img);

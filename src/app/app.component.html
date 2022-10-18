@@ -78,9 +78,10 @@
       </div>
 
       <div id="priority-input-box" fxLayout="column">
-        <div fxLayout="row" id="priority-input-box-icon-row">
+        <div fxLayout="row" id="priority-input-box-icon-row-top">
           <button
             mat-icon-button
+            matTooltip="Add Priority"
             id="priority-input-box-left-icon"
             class="priority-input-box-icon"
             (click)="addListItemFromFloat()"
@@ -90,6 +91,7 @@
           <div fxFlex></div>
           <button
             mat-icon-button
+            matTooltip="Cancel"
             id="priority-input-box-right-icon"
             class="priority-input-box-icon"
             (click)="hideFloater()"
@@ -107,6 +109,18 @@
               (keyup.enter)="activePriority ? renamePriority() : addListItemFromFloat()" />
           </mat-form-field>
         </mat-card>
+        <div fxLayout="row" id="priority-input-box-icon-row-bottom" *ngIf="activePriority">
+          <div fxFlex></div>
+          <button
+            mat-icon-button
+            matTooltip="Delete Priority"
+            id="priority-input-box-right-icon"
+            class="priority-input-box-icon"
+            (click)="deleteActivePriority()"
+            color="warn">
+            <mat-icon aria-label="label">remove_circle</mat-icon>
+          </button>
+        </div>
       </div>
     </mat-sidenav-content>
 

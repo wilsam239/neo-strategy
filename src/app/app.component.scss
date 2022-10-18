@@ -69,8 +69,12 @@ mat-sidenav-container {
   right: -20px;
 }
 
-#priority-input-box-icon-row {
+#priority-input-box-icon-row-top {
   top: 20px;
+  position: relative;
+}
+#priority-input-box-icon-row-bottom {
+  bottom: 20px;
   position: relative;
 }
 

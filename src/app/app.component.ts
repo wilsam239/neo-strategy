@@ -588,6 +588,16 @@ export class AppComponent implements OnInit, OnDestroy {
     });
   }
 
+  deleteActivePriority() {
+    const i = this.priorities.findIndex((p) => p.id === this.activePriority);
+
+    if (i > -1) {
+      this.removeListItem(i);
+      this.hideFloater();
+      this.recalculatePriorities();
+    }
+  }
+
   /**
    * Recalcuates the priorities after a dragend event has happened or on fetch from local storage
    */

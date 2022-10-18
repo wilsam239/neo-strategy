@@ -178,8 +178,6 @@ export class AppComponent implements OnInit, OnDestroy {
         )
         .subscribe()
     );
-
-    this.mergeImages([]).subscribe();
   }
 
   ngOnDestroy() {
@@ -194,7 +192,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
     if (!!found) {
       const priorities: PriorityItem[] = JSON.parse(found);
-      console.log('make ' + priorities.length + ' priorities');
       priorities.forEach((p) => this.addPriority(p));
       this.recalculatePriorities();
     }
@@ -366,9 +363,6 @@ export class AppComponent implements OnInit, OnDestroy {
     const middleX = (AXES_START + lastX) / 2;
     const middleY = (this.helper.stage.height() * 0.1 + lastY) / 2;
 
-    console.log(middleX);
-    console.log(middleY);
-
     const xMid = new Line({
       points: [AXES_START, middleY, this.helper.stage.width() * AXES_PERCENTAGE, middleY],
       stroke: this.themeService.activeTheme.getValue().isDark ? 'white' : 'black',
@@ -498,7 +492,6 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   addPriority(p: PriorityItem) {
     const elementNum = this.priorities.push(p);
-    console.log(p);
 
     const priorityGroup = new Group({
       x: p.position.x,
@@ -641,8 +634,6 @@ export class AppComponent implements OnInit, OnDestroy {
         console.error('No Priority found with id: ' + p.id());
         return;
       }
-      // if (p.id() === e.target.id()) {
-      // console.log('Pos: ' + p.x() + ', ' + p.y());
       if (p.x() <= this.helper.stage.width() / 2) {
         // left side of screen
         if (p.y() <= this.helper.stage.height() / 2) {
@@ -658,7 +649,6 @@ export class AppComponent implements OnInit, OnDestroy {
           order[QuantileKeys.BOTTOM_RIGHT].push(_p);
         }
       }
-      // }
     });
 
     this.prioritiesOrder = QUANTILE_ORDER.map((k) => {
@@ -671,8 +661,6 @@ export class AppComponent implements OnInit, OnDestroy {
         return drawnA.x() > drawnB.x() ? 0 : 1;
       });
     }).flat();
-
-    console.log(this.prioritiesOrder);
   }
 
   /**
@@ -698,40 +686,7 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
-  showPriorityList() {
-    // const orderedLayer = new Layer({ id: 'ordered-layer', exclude: true });
-    // const rect = new Rect({
-    //   x: this.xAxisLength,
-    //   y: 0,
-    //   width: 100,
-    //   height: this.yAxisHeight,
-    //   fill: 'white',
-    //   opacity: 0.5,
-    //   id: 'ordered-rect',
-    //   exclude: true,
-    // });
-    // const text = new Text({
-    //   x: this.xAxisLength,
-    //   y: this.yAxisHeight,
-    //   text: this.prioritiesOrder
-    //     .map((p, i) => {
-    //       return `${i + 1} - ${p.title}`;
-    //     })
-    //     .join('\n'),
-    //   fontSize: 12,
-    //   fontFamily: 'Calibri',
-    //   width: 100,
-    //   padding: 20,
-    //   align: 'left',
-    // });
-    // this.helper.addDrawnItem(rect, text);
-    // this.helper.addTo(orderedLayer, rect, text);
-    // this.helper.addToStage(orderedLayer);
-    // console.log(orderedLayer);
-  }
-
   handleFabMenuSelection(e: any) {
-    console.log(e);
     switch (e) {
       case 1: {
         // png
@@ -754,7 +709,7 @@ export class AppComponent implements OnInit, OnDestroy {
     const canvas = document.getElementById('canvas-container');
 
     if (canvas) {
-      from(html2canvas(canvas))
+      from(html2canvas(canvas, { allowTaint: true }))
         .pipe(
           tap(() => {
             this.activeRhs = 'order';
@@ -782,7 +737,7 @@ export class AppComponent implements OnInit, OnDestroy {
             );
           }),
           mergeMap((imgs) => {
-            return this.mergeImages(imgs.map((img) => img.toDataURL())).pipe(tap((img) => console.log(img)));
+            return this.mergeImages(imgs.map((img) => img.toDataURL()));
           }),
           catchError((err) => {
             console.error(err);
@@ -804,6 +759,9 @@ export class AppComponent implements OnInit, OnDestroy {
       return throwError(() => 'No result-canvas');
     }
 
+    c.style.display = 'block';
+    c.width = window.innerWidth + 330;
+    c.height = window.innerHeight;
     var ctx = c.getContext('2d');
 
     if (ctx === null) {
@@ -815,7 +773,6 @@ export class AppComponent implements OnInit, OnDestroy {
       let imgObj = new Image();
 
       imgObj.src = img;
-      imgObjs.push(imgObj);
 
       imgObj.onload = () => {
         if (i > 0) {
@@ -825,6 +782,7 @@ export class AppComponent implements OnInit, OnDestroy {
         }
         subject.next(true);
       };
+      imgObjs.push(imgObj);
     });
 
     return subject.pipe(
@@ -833,10 +791,10 @@ export class AppComponent implements OnInit, OnDestroy {
       }),
       filter(() => numLoaded === imgs.length),
       mergeMap(() => {
-        c.width = imgObjs.reduce((a, b) => a + b.width, 0);
-        c.height = Math.max(...imgObjs.map((img) => img.height));
-        return from(html2canvas(c)).pipe(
+        // return of(null);
+        return from(html2canvas(c, { allowTaint: true, logging: false })).pipe(
           tap((img) => {
+            document.body.appendChild(img);
             const uri = img.toDataURL();
             const filename = `Prioritiy Matrix ${new Date().toDateString()}.png`;
             var link = document.createElement('a');
@@ -846,7 +804,7 @@ export class AppComponent implements OnInit, OnDestroy {
               link.download = filename;
 
               //Firefox requires the link to be in the body
-              // document.body.appendChild(link);
+              document.body.appendChild(link);
 
               //simulate click
               link.click();
@@ -856,23 +814,12 @@ export class AppComponent implements OnInit, OnDestroy {
             } else {
               window.open(uri);
             }
+
+            document.body.removeChild(img);
+            c.style.display = 'none';
           })
         );
       })
-      /*tap(() => {
-        console.log('finished');
-        var img = c.toDataURL('image/png');
-
-        const width = imgObjs.reduce((a, b) => a + b.width, 0);
-        const height = Math.max(...imgObjs.map((img) => img.height));
-        document.write(`<img id="joinedImage" src="${img}" width="${width}" height="${height}"/>`);
-        // const finalImageObj = new Image();
-        // finalImageObj.src = img;
-        // finalImageObj.width = imgObjs.reduce((a, b) => a + b.width, 0);
-        // finalImageObj.height = Math.max(...imgObjs.map((img) => img.height));
-
-        // document.appendChild(finalImageObj);
-      })*/
     );
   }
 }

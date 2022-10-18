@@ -233,6 +233,8 @@ export class AppComponent implements OnInit, OnDestroy {
       if (!e.target.hasChildren()) {
         return;
       }
+      this.activePriority = undefined;
+      this.newPriorityItem = undefined;
 
       this.showInfoCard(e);
     });
@@ -388,6 +390,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.floatingInputDiv.style.top = top + 'px';
     this.floatingInputDiv.style.left = left + 'px';
     this.floatingInputDiv.style.display = 'flex';
+    document.getElementById('floating-input')?.click();
   }
 
   /**
@@ -396,6 +399,7 @@ export class AppComponent implements OnInit, OnDestroy {
   hideFloater() {
     this.floatingInputDiv.style.display = 'none';
     this.newPriorityItem = undefined;
+    this.activePriority = undefined;
   }
 
   /**

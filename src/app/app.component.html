@@ -101,6 +101,7 @@
           <mat-form-field appearance="outline" fxFill>
             <mat-label>{{ activePriority ? 'Rename Priority' : 'New Priority' }}</mat-label>
             <input
+              id="floating-input"
               matInput
               [(ngModel)]="newPriorityItem"
               (keyup.enter)="activePriority ? renamePriority() : addListItemFromFloat()" />

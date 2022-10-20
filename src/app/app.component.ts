@@ -138,6 +138,9 @@ export class AppComponent implements OnInit, OnDestroy {
     private settings: SettingsService
   ) {}
 
+  ngAfterViewInit() {
+    this.floatingInputDiv.style.display = 'none';
+  }
   ngOnInit() {
     this.initStage();
 
@@ -243,7 +246,9 @@ export class AppComponent implements OnInit, OnDestroy {
     if (stageDiv !== null) this.stageDiv = stageDiv;
 
     const floatingInputDiv = document.getElementById('priority-input-box');
-    if (floatingInputDiv !== null) this.floatingInputDiv = floatingInputDiv;
+    if (floatingInputDiv !== null) {
+      this.floatingInputDiv = floatingInputDiv;
+    }
 
     this.helper = new KonvaHelper(stage, this.settings);
 
@@ -260,6 +265,7 @@ export class AppComponent implements OnInit, OnDestroy {
       if (!e.target.hasChildren()) {
         return;
       }
+      console.log('Click event');
       this.activePriority = undefined;
       this.newPriorityItem = undefined;
 
@@ -553,6 +559,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.helper.addTo(this.priorityLayer, priorityGroup);
 
     this.priorityLayer.draw();
+    this.recalculatePriorities();
   }
 
   /**
@@ -609,6 +616,7 @@ export class AppComponent implements OnInit, OnDestroy {
           });
       }
     });
+    this.recalculatePriorities();
   }
 
   deleteActivePriority() {
@@ -653,14 +661,17 @@ export class AppComponent implements OnInit, OnDestroy {
     });
 
     this.prioritiesOrder = QUANTILE_ORDER.map((k) => {
-      return order[k].sort((a, b) => {
+      const quantiledOrdered = order[k].sort((a, b) => {
         const drawnA = this.helper.fetchDrawnItem(a.id);
         const drawnB = this.helper.fetchDrawnItem(b.id);
+
         if (drawnA.x() === drawnB.x()) {
-          return drawnA.y() < drawnB.y() ? 0 : 1;
+          return drawnB.y() - drawnA.y();
         }
-        return drawnA.x() > drawnB.x() ? 0 : 1;
+        return drawnB.x() - drawnA.x();
       });
+
+      return quantiledOrdered;
     }).flat();
   }
 

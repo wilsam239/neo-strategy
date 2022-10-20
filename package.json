@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "deploy": "./deploy.sh ng build --prod --base-href 'https://wilsam239.github.io/neo-strategy/' && npx angular-cli-ghpages --dir=dist/neo-strategy"
+    "deploy": "./deploy.sh && ng build --prod --base-href 'https://wilsam239.github.io/neo-strategy/' && npx angular-cli-ghpages --dir=dist/neo-strategy"
   },
   "private": true,
   "dependencies": {

@@ -59,7 +59,7 @@
       </p>
     </mat-expansion-panel>
   </mat-accordion>
-  <p id="deployment-date">Deployed: <br />{{ deployDate | date: 'full' }}</p>
+  <p id="deployment-date">Deployed: <br />{{ deployDate * 1000 | date: 'full' }}</p>
 </div>
 <ng-template #themesSection>
   <mat-selection-list #themeList [multiple]="false" (selectionChange)="themeChangeHandler($event)">

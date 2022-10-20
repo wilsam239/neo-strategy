@@ -8,6 +8,7 @@ import { Label } from 'konva/lib/shapes/Label';
 import { Line } from 'konva/lib/shapes/Line';
 import { Text } from 'konva/lib/shapes/Text';
 import { Subscription, tap } from 'rxjs';
+import { environment } from 'src/environments/environment';
 import { KonvaHelper } from '../konva-helper';
 import { SettingsService } from '../settings.service';
 import { Theme, ThemeService } from '../theme.service';
@@ -19,6 +20,8 @@ import { Theme, ThemeService } from '../theme.service';
 })
 export class SettingsComponent implements OnInit {
   private subs: Subscription[] = [];
+
+  deployDate = environment.deployed;
 
   @Input()
   helper!: KonvaHelper;

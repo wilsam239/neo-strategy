@@ -21,6 +21,7 @@ It is called NeoStrategy because we often created an action priority matrix at s
 - [ ] Fix long names of priorities breaking the list
 - [ ] Fix png and pdf export (if priority list is too long we cannot export easily) - maybe export should just screenshot the canvas, and not do the resulting order
 - [ ] Add export final order to clipboard for pasting
+- [ ] Add export as JSON
 - [ ] Press escape to exit out of the floating input box
 - [ ] Dynamic resizing
 - [x] Keep a dynamic list of priorities based on quarters

@@ -16,6 +16,7 @@ It is called NeoStrategy because we often created an action priority matrix at s
 - [x] Edit/delete priority when clicking on it on the canvas
 - [ ] When pasting into the floating input box, automatically add it instead of waiting for enter or add button
 - [ ] If clicking away from the floating priority and there is text entered, add the priority as if pressing the enter or add button
+- [ ] Change position of floating input tooltips so they aren't in the way
 - [ ] Dynamic resizing
 - [x] Keep a dynamic list of priorities based on quarters
 - [x] Axis labels

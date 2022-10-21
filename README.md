@@ -15,6 +15,7 @@ It is called NeoStrategy because we often created an action priority matrix at s
 - [x] Add a screenshot tool to export the as a PNG/PDF that shows the left sidenav and all the priorities
 - [x] Edit/delete priority when clicking on it on the canvas
 - [ ] When pasting into the floating input box, automatically add it instead of waiting for enter or add button
+- [ ] If clicking away from the floating priority and there is text entered, add the priority as if pressing the enter or add button
 - [ ] Dynamic resizing
 - [x] Keep a dynamic list of priorities based on quarters
 - [x] Axis labels

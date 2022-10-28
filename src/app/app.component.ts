@@ -131,6 +131,7 @@ export class AppComponent implements OnInit, OnDestroy {
   @ViewChild('rhs')
   rightNav!: MatSidenav;
 
+  floaterVisible = false;
   constructor(
     private dialog: MatDialog,
     private snack: MatSnackBar,
@@ -262,12 +263,28 @@ export class AppComponent implements OnInit, OnDestroy {
     // this.makeFakeList(15);
 
     stage.on('click', (e) => {
+      const exit = () => {
+        this.activePriority = undefined;
+        this.newPriorityItem = undefined;
+        return;
+      };
       if (!e.target.hasChildren()) {
         return;
       }
-      console.log('Click event');
-      this.activePriority = undefined;
-      this.newPriorityItem = undefined;
+
+      if (this.activePriority) {
+        this.renamePriority();
+        return;
+      } else if (this.newPriorityItem) {
+        this.addListItemFromFloat();
+        return;
+      }
+
+      if (this.floatingInputDiv.style.display === 'flex') {
+        this.hideFloater();
+        exit();
+        return;
+      }
 
       this.showInfoCard(e);
     });
@@ -420,6 +437,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.floatingInputDiv.style.top = top + 'px';
     this.floatingInputDiv.style.left = left + 'px';
     this.floatingInputDiv.style.display = 'flex';
+    this.floaterVisible = true;
     document.getElementById('floating-input')?.click();
   }
 
@@ -428,6 +446,7 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   hideFloater() {
     this.floatingInputDiv.style.display = 'none';
+    this.floaterVisible = false;
     this.newPriorityItem = undefined;
     this.activePriority = undefined;
   }

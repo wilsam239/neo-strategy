@@ -89,6 +89,7 @@
           <button
             mat-icon-button
             matTooltip="Add Priority"
+            matTooltipPosition="above"
             id="priority-input-box-left-icon"
             class="priority-input-box-icon"
             (click)="addListItemFromFloat()"
@@ -99,6 +100,7 @@
           <button
             mat-icon-button
             matTooltip="Cancel"
+            matTooltipPosition="above"
             id="priority-input-box-right-icon"
             class="priority-input-box-icon"
             (click)="hideFloater()"
@@ -113,7 +115,9 @@
               id="floating-input"
               matInput
               [(ngModel)]="newPriorityItem"
-              (keyup.enter)="activePriority ? renamePriority() : addListItemFromFloat()" />
+              (keyup.escape)="hideFloater()"
+              (keyup.enter)="activePriority ? renamePriority() : addListItemFromFloat()"
+              (paste)="activePriority ? renamePriority() : addListItemFromFloat()" />
           </mat-form-field>
         </mat-card>
         <div fxLayout="row" id="priority-input-box-icon-row-bottom" *ngIf="activePriority">

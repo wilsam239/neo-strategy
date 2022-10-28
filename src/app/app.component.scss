@@ -99,3 +99,7 @@ mat-sidenav-container {
   display: none;
   // visibility: hidden;
 }
+
+#import-fab {
+  margin-bottom: 21px; // this is because the export fab menu has a margin bottom of 5 px and the actual fab has a margin bottom of 16px
+}

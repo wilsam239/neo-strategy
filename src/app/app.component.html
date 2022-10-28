@@ -76,7 +76,10 @@
           <mat-icon aria-label="label">help</mat-icon>
         </button>
       </div>
-      <div fxLayout="row" class="rhs-actions" id="rhs-actions-bottom" fxLayoutGap="1em">
+      <div fxLayout="row" class="rhs-actions" id="rhs-actions-bottom" fxLayoutGap="1em" fxLayoutAlign=" end">
+        <button mat-fab (click)="openPasteWindow()" matTooltip="Import From JSON" id="import-fab">
+          <mat-icon>file_upload</mat-icon>
+        </button>
         <mat-fab-menu
           color="accent"
           [fabButtons]="exportMenu"

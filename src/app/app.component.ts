@@ -124,8 +124,8 @@ export class AppComponent implements OnInit, OnDestroy {
   };
 
   exportMenu: MatFabMenu[] = [
-    { id: 1, icon: 'add_a_photo', color: 'primary', tooltip: 'Save as PNG', tooltipPosition: 'left' },
-    { id: 2, icon: 'picture_as_pdf', color: 'primary', tooltip: 'Save as PDF', tooltipPosition: 'left' },
+    { id: 1, icon: 'content_paste', color: 'primary', tooltip: 'Copy to Clipboard', tooltipPosition: 'left' },
+    { id: 2, icon: 'data_object', color: 'primary', tooltip: 'Save as JSON', tooltipPosition: 'left' },
   ];
 
   @ViewChild('rhs')
@@ -202,16 +202,8 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Save the stringifed priorities to local storage
-   */
-  saveToLocalStorage() {
-    this.snack.open('Priorities Saved!', undefined, {
-      panelClass: 'green-snack',
-      duration: 3000,
-    });
-
-    const drawnItems: (PriorityItem | undefined)[] = this.priorities
+  getJSONPriorities() {
+    return this.priorities
       .map((p) => {
         const drawn = this.helper.fetchDrawnItem(p.id);
 
@@ -229,6 +221,18 @@ export class AppComponent implements OnInit, OnDestroy {
         }
       })
       .filter((p) => !!p);
+  }
+
+  /**
+   * Save the stringifed priorities to local storage
+   */
+  saveToLocalStorage() {
+    this.snack.open('Priorities Saved!', undefined, {
+      panelClass: 'green-snack',
+      duration: 3000,
+    });
+
+    const drawnItems = this.getJSONPriorities();
 
     window.localStorage.setItem(LOCAL_STORAGE_KEYS.PRIORITIES, JSON.stringify(drawnItems));
   }
@@ -720,14 +724,16 @@ export class AppComponent implements OnInit, OnDestroy {
   handleFabMenuSelection(e: any) {
     switch (e) {
       case 1: {
-        // png
-        this.captureImage('png');
+        // clipboard
+        this.exportToClipboard();
+        // this.captureImage('png');
         return;
       }
 
       case 2: {
-        //pdf
-        this.captureImage('pdf');
+        // save to json
+        this.saveToJSON();
+        // this.captureImage('pdf');
         return;
       }
 
@@ -735,6 +741,17 @@ export class AppComponent implements OnInit, OnDestroy {
         // unsupported
       }
     }
+  }
+
+  private saveToJSON() {}
+
+  private exportToClipboard() {
+    const drawnItems = this.getJSONPriorities();
+    navigator.clipboard.writeText(JSON.stringify(drawnItems));
+    this.snack.open('Copied to Clipboard', undefined, {
+      panelClass: 'blue-snack',
+      duration: 3000,
+    });
   }
 
   captureImage(filetype: 'png' | 'pdf') {
@@ -873,5 +890,9 @@ export class AppComponent implements OnInit, OnDestroy {
         );
       })
     );
+  }
+
+  openPasteWindow() {
+    // this.dialog.open()
   }
 }

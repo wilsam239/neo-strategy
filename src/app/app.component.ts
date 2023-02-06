@@ -124,8 +124,14 @@ export class AppComponent implements OnInit, OnDestroy {
   };
 
   exportMenu: MatFabMenu[] = [
-    { id: 1, icon: 'content_paste', color: 'primary', tooltip: 'Copy to Clipboard', tooltipPosition: 'left' },
-    { id: 2, icon: 'data_object', color: 'primary', tooltip: 'Save as JSON', tooltipPosition: 'left' },
+    {
+      id: 1,
+      icon: 'content_paste',
+      color: 'primary',
+      tooltip: 'Export Ordered List to Clipboard',
+      tooltipPosition: 'left',
+    },
+    { id: 2, icon: 'data_object', color: 'primary', tooltip: 'Save View as JSON', tooltipPosition: 'left' },
   ];
 
   @ViewChild('rhs')
@@ -725,14 +731,14 @@ export class AppComponent implements OnInit, OnDestroy {
     switch (e) {
       case 1: {
         // clipboard
-        this.exportToClipboard();
+        this.exportOrderedToJSON();
         // this.captureImage('png');
         return;
       }
 
       case 2: {
         // save to json
-        this.saveToJSON();
+        this.exportUnorderedToJSON();
         // this.captureImage('pdf');
         return;
       }
@@ -743,12 +749,23 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
-  private saveToJSON() {}
+  private exportOrderedToJSON() {
+    const order = this.prioritiesOrder
+      .map((p, i) => {
+        return `${i + 1}. ${p.title}`;
+      })
+      .join('\n');
+    navigator.clipboard.writeText(order);
+    this.snack.open('Copied Order to Clipboard', undefined, {
+      panelClass: 'blue-snack',
+      duration: 3000,
+    });
+  }
 
-  private exportToClipboard() {
+  private exportUnorderedToJSON() {
     const drawnItems = this.getJSONPriorities();
     navigator.clipboard.writeText(JSON.stringify(drawnItems));
-    this.snack.open('Copied to Clipboard', undefined, {
+    this.snack.open('Copied View to Clipboard', undefined, {
       panelClass: 'blue-snack',
       duration: 3000,
     });

@@ -273,7 +273,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.fetchFromLocalStorage();
     // this.makeFakeList(15);
 
-    stage.on('click touchstart', (e) => {
+    stage.on('click touchend', (e) => {
       const exit = () => {
         this.activePriority = undefined;
         this.newPriorityItem = undefined;

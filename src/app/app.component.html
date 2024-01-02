@@ -56,6 +56,10 @@
           <mat-icon aria-label="label">save</mat-icon>
         </button>
 
+        <button mat-fab (click)="clearPriorities()" id="clear-button" matTooltip="Clear Priorities">
+          <mat-icon aria-label="label">delete_sweep</mat-icon>
+        </button>
+
         <button
           mat-fab
           (click)="activeRhs = 'order'; rhs.toggle()"

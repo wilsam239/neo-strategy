@@ -30,6 +30,7 @@ import {
   tap,
   throwError,
 } from 'rxjs';
+import { SharedDialogComponent } from './dialog/shared-dialog.component';
 import { KonvaHelper } from './konva-helper';
 import { SettingsService } from './settings.service';
 import { ThemeService } from './theme.service';
@@ -272,7 +273,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.fetchFromLocalStorage();
     // this.makeFakeList(15);
 
-    stage.on('click', (e) => {
+    stage.on('click touchstart', (e) => {
       const exit = () => {
         this.activePriority = undefined;
         this.newPriorityItem = undefined;
@@ -423,9 +424,9 @@ export class AppComponent implements OnInit, OnDestroy {
    * Shows the floating priority card
    * @param e The mouse event that triggered the card to open
    */
-  private showInfoCard(e: KonvaEventObject<MouseEvent>) {
-    const mouseX = e.evt.clientX;
-    const mouseY = e.evt.clientY;
+  private showInfoCard(e: KonvaEventObject<MouseEvent | TouchEvent>) {
+    const mouseX = e.evt instanceof MouseEvent ? e.evt.clientX : e.evt.touches[0].clientX;
+    const mouseY = e.evt instanceof MouseEvent ? e.evt.clientY : e.evt.touches[0].clientY;
 
     let top = mouseY - FLOATING_INPUT_HEIGHT / 2;
     let left = mouseX;
@@ -621,6 +622,26 @@ export class AppComponent implements OnInit, OnDestroy {
     return pos;
   }
 
+  clearPriorities() {
+    this.dialog
+      .open(SharedDialogComponent, {
+        data: {
+          posBtn: 'Yes',
+          negBtn: 'No',
+          title: 'Are You Sure',
+        },
+      })
+      .afterClosed()
+      .pipe(
+        filter((res) => !!res),
+        tap(() => {
+          while (this.priorities.length > 0) {
+            this.removeListItem(0);
+          }
+        })
+      )
+      .subscribe();
+  }
   /**
    * Removes the list item at the given index
    * @param i index of the item

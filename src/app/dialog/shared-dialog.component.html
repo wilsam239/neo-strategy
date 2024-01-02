@@ -1,0 +1,22 @@
+<div fxLayout="column" class="shared-dialog-container">
+  <div fxLayoutAlign="start start" class="shared-dialog-toolbar-container">
+    <div mat-dialog-title class="shared-dialog-toolbar">
+      <span class="shared-dialog-title">{{ data.title }}</span>
+    </div>
+  </div>
+  <div mat-dialog-content fxFlex class="shared-dialog-content-container">
+    <ng-container *ngIf="data.text">
+      <div class="shared-dialog-content-description" [innerHtml]="data.text"></div>
+    </ng-container>
+  </div>
+  <div
+    mat-dialog-actions
+    fxLayoutAlign="start end"
+    class="shared-dialog-action-bar-container align-content-right"
+    style="margin-bottom: 0">
+    <button *ngIf="data.negBtn" color="warn" mat-button (click)="onClick(false)">{{ data.negBtn }}</button>
+    <button color="accent" mat-button (click)="onClick(true)">
+      {{ data.posBtn }}
+    </button>
+  </div>
+</div>

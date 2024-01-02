@@ -22,6 +22,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { SharedDialogComponent } from './dialog/shared-dialog.component';
 import { SettingsComponent } from './settings/settings.component';
 import { StyleManagerService } from './style-manager.service';
 import { ThemeService } from './theme.service';
@@ -45,7 +46,7 @@ const MATERIAL_LIBS = [
 ];
 
 @NgModule({
-  declarations: [AppComponent, SettingsComponent],
+  declarations: [AppComponent, SettingsComponent, SharedDialogComponent],
   imports: [BrowserModule, BrowserAnimationsModule, FlexLayoutModule, FormsModule, ...MATERIAL_LIBS, MatFabMenuModule],
   providers: [ThemeService, StyleManagerService],
   bootstrap: [AppComponent],
